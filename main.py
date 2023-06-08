@@ -12,7 +12,8 @@ class DataCollector:
     def __init__(self, json_url) -> None:
         self.callsign_list = {}
         self.json_url = json_url
-    def update_departure_list(self):
+
+    def update_proposed_departures(self):
         self.update_json(json_url)
         self.scan_pilots()
     
@@ -39,17 +40,9 @@ class DataCollector:
             except Exception as e:
                 continue                
 
-    def print_strip(callsign):
-        """
-        Print strip for specific callsign
-        """
-        # TODO
-        # strip printer code here including formatting
-
     def update_json(self, json_url):
         r = requests.get(json_url)
         self.json_file = r.json()
-        # return r.json()
     
 class Printer:
     def __init__(self, data_collector:DataCollector) -> None:
@@ -58,23 +51,6 @@ class Printer:
     def input_callsign():
         callsign = input("Enter Callsign: ")
         return callsign.upper()
-        # try:
-        # _thread.start_new_thread(self.start_timer,("timer thread", 0,))
-        # _thread.start_new_thread(self.print_callsign_data,("printing tread", 0,))
-        # except:
-            # print("unable to start thread")
-        #  self.start_timer()
-        #  self.print_callsign_data()
-            
-    # def start_timer(self, thread_name, delay):
-    #     print("hi")
-    #     self.start_time = time.perf_counter()
-    #     while(True):
-    #         self.current_time = time.perf_counter()
-    #         if (self.current_time-self.start_time) >= 15:
-    #             print("I am a clock that counted 15 seconds, i am cool")
-    #         #   self.dataCollector.update_json(self.json_url)
-    #         #   self.dataCollector.scan_pilots()
 
     def print_callsign_data(self, requested_callsign):
         callsign_data = self.data_collector.get_callsign_data(requested_callsign)
@@ -113,7 +89,7 @@ class Printer:
             flightplan_list.remove("DCT")
         if "dct" in flightplan_list:
             flightplan_list.remove("dct")
-        # Truncates flightplan route to first 3 waypoints. routes longer than 3 waypoints are represented with a ./.
+        # Truncates flightplan route to first 3 waypoints. routes longer than 3 waypoints are represented with a ./. at the end
         build_string = ""
         for i in range(len(flightplan_list)):
             if i >= 3:
@@ -172,75 +148,40 @@ class Printer:
         r2 = random.randint(0,9)
         r3 = random.randint(0,9)
         return f"{r1}{r2}{r3}"
+    
+class Timer:
+    def __init__(self) -> None:
+        pass
+
+    def start_timer(self, countdown_time: int):
+        self.start_time = time.perf_counter()
+        self.current_time = time.perf_counter()
+        while((self.current_time - self.start_time) < countdown_time):
+            self.current_time = time.perf_counter()
+        return True
+
+class CallsignRequester:
+    def __init__(self) -> None:
+        pass
+
+    def request_input(self) -> str:
+        callsign = input("Enter Callsign: ")
+        return callsign.upper()
+
 if __name__ == "__main__":
     json_url = "https://data.vatsim.net/v3/vatsim-data.json"
     data_collector = DataCollector(json_url)
     printer = Printer(data_collector)   
-    data_collector.update_departure_list()
+    callsign_requester = CallsignRequester()
+    data_collector.update_proposed_departures()
 
     while(True):
-        callsign = input("Enter Callsign: ")
-        callsign = callsign.upper()
+        callsign = callsign_requester.request_input()
         printer.print_callsign_data(callsign)
           
-
 ## TODO
 # button for printing
 # What if flight plan ammended
 # What if fight plan 
 # Manual addition of flight strip (i.e type in callsign, get strip)
 # Blank strip...?
-        
-        # def time_elapsed(self) -> float:
-        #      return self.current_time-self.start_time
-        
-        # def reset_timer(self):
-        #      self.start_time = self.current_time
-
-# class UserInput:
-#      def __init__(self) -> None:
-#           pass
-#      def get_input():
-#           return input("Enter Callsign: ")
-             
-# def main(): 
-    #Getting JSON Data
-    # json_url = "https://data.vatsim.net/v3/vatsim-data.json"
-    # dataCollector = DataCollector(json_url)
-    # timer = Timer()
-    # user_input = UserInput()
-
-    # try:
-    #     thread.start_new_thread(timer.start_timer())
-    # # peak coding right here
-    # start_time = time.perf_counter()
-    # # print("hi")
-    # while(True):
-    #     current_time = time.perf_counter()
-    #     if (current_time - start_time) >= 15:
-    #         print("wow, that was 15 seconds")
-    #         dataCollector.update_json(json_url)
-    #         dataCollector.scan_pilots()
-    #         start_time = current_time
-
-# if __name__ == "main":
-
-
-
-
-
-
-
-# for pilots in connected_pilots:
-#     pilot_dep = pilots[['flight_plan']['departure']]
-#     if pilot_dep == "KATL":
-#      print(pilot_dep)
-
-#for x in cont['pilots']:
-#    if ['flight_plan'] != None:
-#        havePlans = x
-
-#for k in havePlans['flight_plan']:
-#    if ['departure'] == "KATL":
-#        print("fuck")
-    
