@@ -1,22 +1,23 @@
 import requests
 import json
 import time
-import _thread
 import zpl
 import random
 from zebra import Zebra
+
 __author__ = "Simon Heck"
+
 class DataCollector:
 
     def __init__(self, json_url) -> None:
         self.callsign_list = {}
         self.json_url = json_url
-
+    def update_departure_list(self):
         self.update_json(json_url)
         self.scan_pilots()
-
+    
     def add_pilot_to_dep_list(self, current_pilot):
-            pilot_callsign = current_pilot['callsign']
+            pilot_callsign = current_pilot['callsign'].upper()
             self.callsign_list[pilot_callsign] = current_pilot
     
     def get_callsign_data(self, callsign):
@@ -50,10 +51,13 @@ class DataCollector:
         self.json_file = r.json()
         # return r.json()
     
-class Main:
-    def __init__(self, json_url) -> None:
-        self.dataCollector = DataCollector(json_url)
-        self.print_callsign_data()
+class Printer:
+    def __init__(self, data_collector:DataCollector) -> None:
+        self.data_collector = data_collector
+
+    def input_callsign():
+        callsign = input("Enter Callsign: ")
+        return callsign.upper()
         # try:
         # _thread.start_new_thread(self.start_timer,("timer thread", 0,))
         # _thread.start_new_thread(self.print_callsign_data,("printing tread", 0,))
@@ -71,6 +75,34 @@ class Main:
     #             print("I am a clock that counted 15 seconds, i am cool")
     #         #   self.dataCollector.update_json(self.json_url)
     #         #   self.dataCollector.scan_pilots()
+
+    def print_callsign_data(self, requested_callsign):
+        callsign_data = self.data_collector.get_callsign_data(requested_callsign)
+
+        if callsign_data is not None:
+
+            callsign = callsign_data['callsign']
+            ac_type = callsign_data['flight_plan']['aircraft_faa']
+            departure_time = f"P{callsign_data['flight_plan']['deptime']}"
+            cruise_alt = self.format_cruise_altitude(callsign_data['flight_plan']['altitude'])
+            flightplan = self.format_flightplan(callsign_data['flight_plan']['route'])
+            assigned_sq = callsign_data['flight_plan']['assigned_transponder']
+            destination = callsign_data['flight_plan']['arrival']
+            remarks = callsign_data['flight_plan']['remarks']
+            remarks = f"{remarks[:15]} ***"
+            enroute_time = callsign_data['flight_plan']['enroute_time']
+            cid = callsign_data['cid']
+            exit_fix = self.match_ATL_exit_fix(flightplan)
+            computer_id = self.generate_random_id()
+
+            print(f"{callsign}, {ac_type}, {departure_time}, {cruise_alt}, {flightplan}, {assigned_sq}, {destination}, {enroute_time} {cid}, {exit_fix}, {computer_id}")
+            #print flight strip on printer
+            # zebra = Zebra()
+            # Q = zebra.getqueues()
+            # zebra.setqueue(Q[0])
+            # zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB140,1,0,L^FO5,1470^FD{callsign}^A0b,40,40^FS^FB200,1,0,L^FO60,1400^FD{ac_type}^A0b,40,40^FS^FO130,1530^FD{computer_id}^A0b,40,40^FS^FO130,1320^BCB,40,N,N,N,A^FD{cid}^FS^FB200,1,0,R^FO45,1320^FD{exit_fix}^A0b,80,80^FS^FO5,1200^FD{assigned_sq}^A0b,40,40^FS^FO80,1190^FD{departure_time}^A0b,40,40^FS^FO145,1220^FD{cruise_alt}^A0b,40,40^FS^FO5,1050^FDKATL^A0b,40,40^FS^FB500,1,0,L^FO5,450^FD{flightplan}^A0b,40,40^FS^FB500,1,0,L^FO70,450^FD{destination}^A0b,40,40^FS^^FB500,1,0,L^FO135,450^FD{remarks}^A0b,40,40^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
+        else:
+            print(f"could not find {callsign} in ATL proposals")
 
     def format_flightplan(self, flightplan):
         
@@ -140,40 +172,25 @@ class Main:
         r2 = random.randint(0,9)
         r3 = random.randint(0,9)
         return f"{r1}{r2}{r3}"
-    
-    def print_callsign_data(self):
-        while(True):
-            callsign = input("Enter Callsign: ")
-            callsign = callsign.upper()
-            callsign_data = self.dataCollector.get_callsign_data(callsign)
-            if callsign_data is not None:
-                callsign = callsign_data['callsign']
-                ac_type = callsign_data['flight_plan']['aircraft_faa']
-                departure_time = f"P{callsign_data['flight_plan']['deptime']}"
-                cruise_alt = self.format_cruise_altitude(callsign_data['flight_plan']['altitude'])
-                flightplan = self.format_flightplan(callsign_data['flight_plan']['route'])
-                assigned_sq = callsign_data['flight_plan']['assigned_transponder']
-                destination = callsign_data['flight_plan']['arrival']
-                remarks = callsign_data['flight_plan']['remarks']
-                remarks = f"{remarks[:15]} ***"
-                enroute_time = callsign_data['flight_plan']['enroute_time']
-                cid = callsign_data['cid']
-                exit_fix = self.match_ATL_exit_fix(flightplan)
-                computer_id = self.generate_random_id()
+if __name__ == "__main__":
+    json_url = "https://data.vatsim.net/v3/vatsim-data.json"
+    data_collector = DataCollector(json_url)
+    printer = Printer(data_collector)   
+    data_collector.update_departure_list()
 
-                #print(f"{callsign}, {ac_type}, {departure_time}, {cruise_alt}, {flightplan}, {assigned_sq}, {destination}, {enroute_time} {cid}, {exit_fix}")
-                #print strip
-                zebra = Zebra()
-                Q = zebra.getqueues()
-                zebra.setqueue(Q[0])
-                zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB140,1,0,L^FO5,1470^FD{callsign}^A0b,40,40^FS^FB200,1,0,L^FO60,1400^FD{ac_type}^A0b,40,40^FS^FO130,1530^FD{computer_id}^A0b,40,40^FS^FO130,1320^BCB,40,N,N,N,A^FD{cid}^FS^FB200,1,0,R^FO45,1320^FD{exit_fix}^A0b,80,80^FS^FO5,1200^FD{assigned_sq}^A0b,40,40^FS^FO80,1190^FD{departure_time}^A0b,40,40^FS^FO145,1220^FD{cruise_alt}^A0b,40,40^FS^FO5,1050^FDKATL^A0b,40,40^FS^FB500,1,0,L^FO5,450^FD{flightplan}^A0b,40,40^FS^FB500,1,0,L^FO70,450^FD{destination}^A0b,40,40^FS^^FB500,1,0,L^FO135,450^FD{remarks}^A0b,40,40^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
-                pass
-            else:
-                print(f"could not find {callsign} in ATL proposals")
+    while(True):
+        callsign = input("Enter Callsign: ")
+        callsign = callsign.upper()
+        printer.print_callsign_data(callsign)
+          
 
-json_url = "https://data.vatsim.net/v3/vatsim-data.json"
-Main(json_url)         
-
+## TODO
+# button for printing
+# What if flight plan ammended
+# What if fight plan 
+# Manual addition of flight strip (i.e type in callsign, get strip)
+# Blank strip...?
+        
         # def time_elapsed(self) -> float:
         #      return self.current_time-self.start_time
         
@@ -212,12 +229,6 @@ Main(json_url)
 
 
 
-## TODO
-# button for printing
-# What if flight plan ammended
-# What if fight plan 
-# Manual addition of flight strip (i.e type in callsign, get strip)
-# Blank strip...?
 
 
 # for pilots in connected_pilots:
