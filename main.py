@@ -16,6 +16,9 @@ class DataCollector:
     def update_proposed_departures(self):
         self.update_json(json_url)
         self.scan_pilots()
+
+    def get_callsign_list(self):
+        return self.callsign_list
     
     def add_pilot_to_dep_list(self, current_pilot):
             pilot_callsign = current_pilot['callsign'].upper()
@@ -23,6 +26,19 @@ class DataCollector:
     
     def get_callsign_data(self, callsign):
         return self.callsign_list.get(callsign)
+    
+    def in_geographical_region(self, airport:str, airplane_lat_long:tuple) -> bool:
+        #KATL NW Lat_Long point
+        northern_latitude = 33.66160132114376
+        western_longitude = -84.4567732450538
+        #KATL SE Lat_long point
+        southern_latitude = 33.61374004734878
+        eastern_longitude =-84.39639798954067
+        # airplane lat_long position
+        airplane_lat, airplane_long = airplane_lat_long
+    
+        if (airplane_lat < northern_latitude and airplane_lat > southern_latitude) and (airplane_long > western_longitude and airplane_long < eastern_longitude):
+            return True
 
     def scan_pilots(self):
         connected_pilots = self.json_file['pilots']
@@ -32,7 +48,8 @@ class DataCollector:
             current_pilot = connected_pilots[i]
             try:
                 departure_airport = current_pilot['flight_plan']['departure']
-                if departure_airport == "KATL":
+                lat_long_tuple = (current_pilot['latitude'], current_pilot['longitude'])
+                if departure_airport == "KATL" and self.in_geographical_region("KATL", lat_long_tuple):
                     # Save callsign of pilot and associated JSON Info
                     # to access, use: self.callsign_list.get(**callsign**)
                     # that will return the portion of the JSON with all of the pilot's info from when the system added them(flightplan, CID, etc.)
@@ -78,7 +95,7 @@ class Printer:
             # zebra.setqueue(Q[0])
             # zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB140,1,0,L^FO5,1470^FD{callsign}^A0b,40,40^FS^FB200,1,0,L^FO60,1400^FD{ac_type}^A0b,40,40^FS^FO130,1530^FD{computer_id}^A0b,40,40^FS^FO130,1320^BCB,40,N,N,N,A^FD{cid}^FS^FB200,1,0,R^FO45,1320^FD{exit_fix}^A0b,80,80^FS^FO5,1200^FD{assigned_sq}^A0b,40,40^FS^FO80,1190^FD{departure_time}^A0b,40,40^FS^FO145,1220^FD{cruise_alt}^A0b,40,40^FS^FO5,1050^FDKATL^A0b,40,40^FS^FB500,1,0,L^FO5,450^FD{flightplan}^A0b,40,40^FS^FB500,1,0,L^FO70,450^FD{destination}^A0b,40,40^FS^^FB500,1,0,L^FO135,450^FD{remarks}^A0b,40,40^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
         else:
-            print(f"could not find {callsign} in ATL proposals")
+            print(f"Could not find {requested_callsign} in ATL proposals. Loser.")
 
     def format_flightplan(self, flightplan):
         
@@ -168,18 +185,39 @@ class CallsignRequester:
         callsign = input("Enter Callsign: ")
         return callsign.upper()
 
+def print_tester(printed_callsigns:list):
+
+    callsign_list = data_collector.get_callsign_list()
+    for callsign_to_print in callsign_list:
+        if callsign_to_print not in printed_callsigns:
+            printer.print_callsign_data(callsign_to_print)
+            printed_callsigns.append(callsign_to_print)
+
 if __name__ == "__main__":
     json_url = "https://data.vatsim.net/v3/vatsim-data.json"
     data_collector = DataCollector(json_url)
     printer = Printer(data_collector)   
     callsign_requester = CallsignRequester()
     data_collector.update_proposed_departures()
-
+    
+    printed_callsigns = []
     while(True):
-        callsign = callsign_requester.request_input()
-        printer.print_callsign_data(callsign)
+        
+        print_tester(printed_callsigns)
+        print("i sleep")
+        time.sleep(15)
+        data_collector.update_proposed_departures()
+        print("real shit")
+
+
+
+        
+    # while(True):
+    #     callsign = callsign_requester.request_input()
+    #     printer.print_callsign_data(callsign)
           
 ## TODO
+# print blank strip
 # button for printing
 # What if flight plan ammended
 # What if fight plan 
