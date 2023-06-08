@@ -76,9 +76,16 @@ class Printer:
         return callsign.upper()
 
     def print_callsign_data(self, requested_callsign):
+        # zebra = Zebra()
+        # Q = zebra.getqueues()
+        # zebra.setqueue(Q[0])
         callsign_data = self.data_collector.get_callsign_data(requested_callsign)
-
-        if callsign_data is not None:
+        if requested_callsign == "" or None:
+            print("blank")
+            # print blank strip
+            # zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB140,1,0,L^FO5,1470^FD^A0b,40,40^FS^FB200,1,0,L^FO60,1400^FD^A0b,40,40^FS^FO130,1530^FD^A0b,40,40^FS^FO130,1320^BCB,40,N,N,N,A^FD^FS^FB200,1,0,R^FO45,1320^FD^A0b,80,80^FS^FO5,1200^FD^A0b,40,40^FS^FO80,1190^FD^A0b,40,40^FS^FO145,1220^FD^A0b,40,40^FS^FO5,1050^FD^A0b,40,40^FS^FB500,1,0,L^FO5,450^FD^A0b,40,40^FS^FB500,1,0,L^FO70,450^FD^A0b,40,40^FS^^FB500,1,0,L^FO135,450^FD^A0b,40,40^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
+        
+        elif callsign_data is not None:
 
             callsign = callsign_data['callsign']
             departure_airport = callsign_data['flight_plan']['departure']
@@ -97,9 +104,6 @@ class Printer:
 
             print(f"{callsign}, {departure_airport}, {ac_type}, {departure_time}, {cruise_alt}, {flightplan}, {assigned_sq}, {destination}, {enroute_time} {cid}, {exit_fix}, {computer_id}")
             #print flight strip on printer
-            # zebra = Zebra()
-            # Q = zebra.getqueues()
-            # zebra.setqueue(Q[0])
             # zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB140,1,0,L^FO5,1470^FD{callsign}^A0b,40,40^FS^FB200,1,0,L^FO60,1400^FD{ac_type}^A0b,40,40^FS^FO130,1530^FD{computer_id}^A0b,40,40^FS^FO130,1320^BCB,40,N,N,N,A^FD{cid}^FS^FB200,1,0,R^FO45,1320^FD{exit_fix}^A0b,80,80^FS^FO5,1200^FD{assigned_sq}^A0b,40,40^FS^FO80,1190^FD{departure_time}^A0b,40,40^FS^FO145,1220^FD{cruise_alt}^A0b,40,40^FS^FO5,1050^FD{departure_airport}^A0b,40,40^FS^FB500,1,0,L^FO5,450^FD{flightplan}^A0b,40,40^FS^FB500,1,0,L^FO70,450^FD{destination}^A0b,40,40^FS^^FB500,1,0,L^FO135,450^FD{remarks}^A0b,40,40^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
         else:
             print(f"Could not find {requested_callsign} in ATL proposals. Loser.")
@@ -195,12 +199,10 @@ class Printer:
 class JSONRefreshTimer:
     def __init__(self, data_collector:DataCollector) -> None:
         self.data_collector = data_collector
-    def start_refreshing(self, delay:int):
+    def start_refreshing(self, delay:int = 10):
         while(True):            
-            print("i sleep")
             time.sleep(delay)
             self.data_collector.update_proposed_departures()
-            print("real shit")
 
     # def restart(self, countdown_time: int):
     #     self.start_time = time.perf_counter()
@@ -214,9 +216,10 @@ class CallsignRequester:
         self.printer = printer
 
     def request_callsign_from_user(self) -> str:
-        callsign_to_print = input("Enter Callsign: ")
-        callsign_to_print.upper()
-        printer.print_callsign_data(callsign_to_print)
+        while(True):
+            callsign_to_print = input("Enter Callsign: ")
+            callsign_to_print = callsign_to_print.upper()
+            printer.print_callsign_data(callsign_to_print)
         
 # def print_tester(printed_callsigns:list):
 
@@ -229,7 +232,6 @@ class CallsignRequester:
 def autoprint():
     printed_callsigns = []
     while(True):
-        print("oh boy here i go looping again")
         callsign_list = data_collector.get_callsign_list()
         for callsign_to_print in callsign_list:
             if callsign_to_print not in printed_callsigns:
@@ -239,7 +241,7 @@ def autoprint():
 
 if __name__ == "__main__":
     json_url = "https://data.vatsim.net/v3/vatsim-data.json"
-    departure_airport = "KCLT"
+    departure_airport = "KATL"
     data_collector = DataCollector(json_url, departure_airport)
     printer = Printer(data_collector)   
     
@@ -248,20 +250,22 @@ if __name__ == "__main__":
 
     # initial data grab
     data_collector.update_proposed_departures()
-    automated_printing_thread = threading.Thread(autoprint())
-    JSON_timer_thread = threading.Thread(json_refresh.start_refreshing(15))
-
-    automated_printing_thread.start()
-    JSON_timer_thread.start()
-   
-    # user_input_thread = threading.Thread(callsign_requester.request_callsign_from_user())
-
+    
     # Main Thread: automatically printing new flight strips
     # thread1: Timer that updates datacollectors JSON (Might have to lock object on update)
     # thread2: listens for user inputs of strip requests
-    
 
-    # printed_callsigns = []
+    # thread1:
+    user_input_thread = threading.Thread(target=callsign_requester.request_callsign_from_user)
+    # thread2:
+    JSON_timer_thread = threading.Thread(target=json_refresh.start_refreshing)
+    # main thread:
+    automated_strip_printing = threading.Thread(target=autoprint)
+    
+    # start all threads
+    JSON_timer_thread.start()
+    automated_strip_printing.start()
+    user_input_thread.start()
 
           
 ## TODO
