@@ -208,9 +208,6 @@ if __name__ == "__main__":
         time.sleep(15)
         data_collector.update_proposed_departures()
         print("real shit")
-
-
-
         
     # while(True):
     #     callsign = callsign_requester.request_input()
