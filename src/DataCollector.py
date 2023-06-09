@@ -4,21 +4,33 @@ __author__ = "Simon Heck"
 
 class DataCollector:
 
-    def __init__(self, json_url, departure_airport) -> None:
+    def __init__(self, json_url:str, departure_airport:str) -> None:
         self.callsign_list = {}
         self.json_url = json_url
         self.departure_airport = departure_airport
 
-    def update_proposed_departures(self):
+    def check_for_updates(self):
         self.update_json(self.json_url)
         self.scan_pilots()
 
+    def get_json(self):
+        return self.json_file
+    
     def get_callsign_list(self):
         return self.callsign_list
     
-    def add_pilot_to_dep_list(self, current_pilot):
-            pilot_callsign = current_pilot['callsign'].upper()
-            self.callsign_list[pilot_callsign] = current_pilot
+    def add_callsign_to_dep_list(self, pilot_callsign, pilot_associated_with_callsign):
+        # if pilot_callsign in self.callsign_list:
+        #     if 'times_amended' in self.callsign_list[pilot_callsign]:
+        #         pilot_associated_with_callsign[pilot_callsign]['times_amended'] = str(int(self.callsign_list[pilot_callsign]['times_amended']) + 1)
+        #         self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
+        #     else:
+        #         pilot_associated_with_callsign[pilot_callsign]['times_amended'] = str(0)
+        #         self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
+        #     print(self.callsign_list[pilot_callsign])
+        # else:
+        self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
+            
     
     def get_callsign_data(self, callsign):
         return self.callsign_list.get(callsign)
@@ -39,7 +51,7 @@ class DataCollector:
     
         if (airplane_lat < northern_latitude and airplane_lat > southern_latitude) and (airplane_long > western_longitude and airplane_long < eastern_longitude):
             return True
-
+        
     def scan_pilots(self):
         connected_pilots = self.json_file['pilots']
         # Interpreting/Filtering JSON Data
@@ -49,13 +61,14 @@ class DataCollector:
             try:
                 pilot_departure_airport = current_pilot['flight_plan']['departure']
                 lat_long_tuple = (current_pilot['latitude'], current_pilot['longitude'])
+                pilot_callsign = current_pilot['callsign'].upper()
                 if pilot_departure_airport == self.departure_airport and self.in_geographical_region(self.departure_airport, lat_long_tuple):
                     # Save callsign of pilot and associated JSON Info
                     # to access, use: self.callsign_list.get(**callsign**)
                     # that will return the portion of the JSON with all of the pilot's info from when the system added them(flightplan, CID, etc.)
-                    self.add_pilot_to_dep_list(current_pilot)
+                    self.add_callsign_to_dep_list(pilot_callsign, current_pilot)
             except Exception as e:
-                continue                
+                pass               
 
     def update_json(self, json_url):
         r = requests.get(json_url)

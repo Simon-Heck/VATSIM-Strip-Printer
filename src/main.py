@@ -17,7 +17,7 @@ class Main():
         callsign_requester = CallsignRequester(printer)
 
         # initial data grab
-        data_collector.update_proposed_departures()
+        data_collector.check_for_updates()
         
         # Main Thread: automatically printing new flight
         # thread1: Timer that updates datacollectors JSON (Might have to lock object on update)

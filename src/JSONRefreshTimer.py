@@ -1,4 +1,4 @@
-import DataCollector
+from DataCollector import DataCollector
 import time
 
 __author__ = "Simon Heck"
@@ -7,7 +7,7 @@ class JSONRefreshTimer:
     def __init__(self, data_collector:DataCollector) -> None:
         self.data_collector = data_collector
 
-    def start_refreshing(self, delay:int = 10):
+    def start_refreshing(self, delay:int = 7):
         while(True):            
             time.sleep(delay)
-            self.data_collector.update_proposed_departures()
+            self.data_collector.check_for_updates()

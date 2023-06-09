@@ -1,4 +1,4 @@
-import Printer
+from Printer import Printer
 
 __author__ = "Simon Heck"
 
