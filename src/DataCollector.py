@@ -19,17 +19,26 @@ class DataCollector:
     def get_callsign_list(self):
         return self.callsign_list
     
-    def add_callsign_to_dep_list(self, pilot_callsign, pilot_associated_with_callsign):
-        if pilot_callsign in self.callsign_list:
-            if 'times_amended' in self.callsign_list[pilot_callsign]:
-                pilot_associated_with_callsign[pilot_callsign]['times_amended'] = str(int(self.callsign_list[pilot_callsign]['times_amended']) + 1)
-                self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
-            else:
-                pilot_associated_with_callsign[pilot_callsign]['times_amended'] = str(0)
-                self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
-            print(self.callsign_list[pilot_callsign])
-        else:
-            self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
+    def add_callsign_to_dep_list(self, pilot_callsign:str, pilot_associated_with_callsign:dict):
+        # if pilot_callsign in self.callsign_list and 'times_amended' not in self.callsign_list[pilot_callsign] and pilot_associated_with_callsign['flight_plan'] != self.callsign_list[pilot_callsign]['flight_plan']:
+            # something has been amended in the flight plan for the first time
+            # TODO: amendment number only if route changed?
+            # pilot_associated_with_callsign['flight_plan']['amendment_number'] = "1"
+            # self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
+            # print(pilot_associated_with_callsign)
+            # print(self.callsign_list[pilot_callsign])
+        
+            # if 'times_amended' in self.callsign_list[pilot_callsign]:
+            #     pilot_associated_with_callsign[pilot_callsign]['times_amended'] = str(int(self.callsign_list[pilot_callsign]['times_amended']) + 1)
+            #     self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
+            # else:
+            #     pilot_associated_with_callsign[pilot_callsign]['times_amended'] = str(0)
+            #     self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
+            # print(self.callsign_list[pilot_callsign])
+        # else:
+        # if pilot_callsign in self.callsign_list and pilot_associated_with_callsign['flight_plan']['route'] != self.callsign_list[pilot_callsign]['flight_plan']['route']:
+            # current_route = pilot_associated_with_callsign['flight_plan']['route'] 
+        self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
             
     def get_callsign_data(self, callsign):
         return self.callsign_list.get(callsign)
@@ -40,8 +49,9 @@ class DataCollector:
             "KATL" : ((33.66160132114376, -84.4567732450538),(33.61374004734878,-84.39639798954067)),
             "KCLT" : ((35.2323196840276,-80.97532070484328),(35.19812613679431,-80.92504772311364))
         }
-        #KATL NW Lat_Long point
+        
         nw_lat_long_point, se_lat_long_point = airports.get(airport)
+        #KATL NW Lat_Long point
         northern_latitude, western_longitude = nw_lat_long_point
         #KATL SE Lat_long point
         southern_latitude, eastern_longitude = se_lat_long_point
@@ -66,8 +76,10 @@ class DataCollector:
                     # to access, use: self.callsign_list.get(**callsign**)
                     # that will return the portion of the JSON with all of the pilot's info from when the system added them(flightplan, CID, etc.)
                     self.add_callsign_to_dep_list(pilot_callsign, current_pilot)
+            except TypeError as te:
+                pass        
             except Exception as e:
-                pass               
+                print(e)  
 
     def update_json(self, json_url):
         r = requests.get(json_url)

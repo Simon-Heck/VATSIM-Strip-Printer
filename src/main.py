@@ -18,16 +18,12 @@ class Main():
 
         # initial data grab
         data_collector.check_for_updates()
-        
-        # Main Thread: automatically printing new flight
-        # thread1: Timer that updates datacollectors JSON (Might have to lock object on update)
-        # thread2: listens for user inputs of strip requests
 
-        # thread1:
+        # thread1: Timer that updates flightplan data when I new JSON is uploaded
         user_input = threading.Thread(target=callsign_requester.request_callsign_from_user)
-        # thread2:
+        # thread2: listens for user inputs for strip requests
         JSON_timer = threading.Thread(target=json_refresh.start_refreshing)
-        # main thread:
+        # Thread3: automatically prints new flight strips when callsign list updated
         automated_strip_printing = threading.Thread(target=printer.autoprint)
         
         # start all threads
