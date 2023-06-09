@@ -10,11 +10,11 @@ class Main():
     def __init__(self) -> None:
         json_url = "https://data.vatsim.net/v3/vatsim-data.json"
         departure_airport = "KATL"
-        data_collector = DataCollector(json_url, departure_airport)
-        printer = Printer(data_collector)   
         
+        printer = Printer() 
+        data_collector = DataCollector(json_url, departure_airport, printer)
+        callsign_requester = CallsignRequester(printer, data_collector)
         json_refresh = JSONRefreshTimer(data_collector)
-        callsign_requester = CallsignRequester(printer)
 
         # initial data grab
         data_collector.check_for_updates()
@@ -24,7 +24,7 @@ class Main():
         # thread2: listens for user inputs for strip requests
         JSON_timer = threading.Thread(target=json_refresh.start_refreshing)
         # Thread3: automatically prints new flight strips when callsign list updated
-        automated_strip_printing = threading.Thread(target=printer.autoprint)
+        automated_strip_printing = threading.Thread(target=data_collector.scan_for_new_aircraft_automatic)
         
         # start all threads
         JSON_timer.start()

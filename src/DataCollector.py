@@ -1,13 +1,15 @@
 import requests
-
+from Printer import Printer
+import time
 __author__ = "Simon Heck"
 
 class DataCollector:
 
-    def __init__(self, json_url:str, departure_airport:str) -> None:
+    def __init__(self, json_url:str, departure_airport:str, printer:Printer) -> None:
         self.callsign_list = {}
         self.json_url = json_url
         self.departure_airport = departure_airport
+        self.printer = printer
 
     def check_for_updates(self):
         self.update_json(self.json_url)
@@ -36,12 +38,29 @@ class DataCollector:
             #     self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
             # print(self.callsign_list[pilot_callsign])
         # else:
-        # if pilot_callsign in self.callsign_list and pilot_associated_with_callsign['flight_plan']['route'] != self.callsign_list[pilot_callsign]['flight_plan']['route']:
-            # current_route = pilot_associated_with_callsign['flight_plan']['route'] 
-        self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
-            
-    def get_callsign_data(self, callsign):
-        return self.callsign_list.get(callsign)
+        
+        # was callsign amended and was the callsign already in the departure list
+        if pilot_callsign in self.callsign_list and pilot_associated_with_callsign['flight_plan']['route'] != self.callsign_list[pilot_callsign]['flight_plan']['route']:
+            self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
+            self.printer.print_callsign_data(self.callsign_list[pilot_callsign], pilot_callsign)
+        else:
+            self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
+
+    def scan_for_new_aircraft_automatic(self):
+        printed_callsigns = []
+        while(True):
+            callsign_table = self.get_callsign_list()
+            for callsign_to_print in callsign_table:
+                if callsign_to_print not in printed_callsigns:
+                    self.printer.print_callsign_data(callsign_table.get(callsign_to_print), callsign_to_print)
+                    printed_callsigns.append(callsign_to_print)
+            time.sleep(0.5)
+
+    def get_callsign_data(self, callsign) -> dict:
+        if callsign not in self.callsign_list:
+            return None
+        else:
+            return self.callsign_list.get(callsign)
     
     def in_geographical_region(self, airport:str, airplane_lat_long:tuple) -> bool:
         # Dict of the form: { airport ICAO : ((NW lat_long point),(SE lat_long point)) }
