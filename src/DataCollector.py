@@ -20,15 +20,6 @@ class DataCollector:
         return self.callsign_list
     
     def add_callsign_to_dep_list(self, pilot_callsign, pilot_associated_with_callsign):
-        # if pilot_callsign in self.callsign_list:
-        #     if 'times_amended' in self.callsign_list[pilot_callsign]:
-        #         pilot_associated_with_callsign[pilot_callsign]['times_amended'] = str(int(self.callsign_list[pilot_callsign]['times_amended']) + 1)
-        #         self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
-        #     else:
-        #         pilot_associated_with_callsign[pilot_callsign]['times_amended'] = str(0)
-        #         self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
-        #     print(self.callsign_list[pilot_callsign])
-        # else:
         self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
             
     def get_callsign_data(self, callsign):
