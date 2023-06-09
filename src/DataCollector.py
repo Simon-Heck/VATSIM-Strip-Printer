@@ -22,23 +22,6 @@ class DataCollector:
         return self.callsign_list
     
     def add_callsign_to_dep_list(self, pilot_callsign:str, pilot_associated_with_callsign:dict):
-        # if pilot_callsign in self.callsign_list and 'times_amended' not in self.callsign_list[pilot_callsign] and pilot_associated_with_callsign['flight_plan'] != self.callsign_list[pilot_callsign]['flight_plan']:
-            # something has been amended in the flight plan for the first time
-            # TODO: amendment number only if route changed?
-            # pilot_associated_with_callsign['flight_plan']['amendment_number'] = "1"
-            # self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
-            # print(pilot_associated_with_callsign)
-            # print(self.callsign_list[pilot_callsign])
-        
-            # if 'times_amended' in self.callsign_list[pilot_callsign]:
-            #     pilot_associated_with_callsign[pilot_callsign]['times_amended'] = str(int(self.callsign_list[pilot_callsign]['times_amended']) + 1)
-            #     self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
-            # else:
-            #     pilot_associated_with_callsign[pilot_callsign]['times_amended'] = str(0)
-            #     self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
-            # print(self.callsign_list[pilot_callsign])
-        # else:
-        
         # was callsign amended and was the callsign already in the departure list
         if pilot_callsign in self.callsign_list and pilot_associated_with_callsign['flight_plan']['route'] != self.callsign_list[pilot_callsign]['flight_plan']['route']:
             self.callsign_list[pilot_callsign] = pilot_associated_with_callsign

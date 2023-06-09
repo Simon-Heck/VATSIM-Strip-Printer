@@ -168,13 +168,3 @@ class Printer:
         r2 = random.randint(0,9)
         r3 = random.randint(0,9)
         return f"{r1}{r2}{r3}"
-    
-    # def autoprint(self):
-    #     printed_callsigns = []
-    #     while(True):
-    #         callsign_list = self.data_collector.get_callsign_list()
-    #         for callsign_to_print in callsign_list:
-    #             if callsign_to_print not in printed_callsigns:
-    #                 self.print_callsign_data(callsign_to_print)
-    #                 printed_callsigns.append(callsign_to_print)
-    #         time.sleep(1)

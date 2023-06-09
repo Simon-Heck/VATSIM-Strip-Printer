@@ -6,6 +6,7 @@ from JSONRefreshTimer import JSONRefreshTimer
 from CallsignRequester import CallsignRequester
 
 __author__ = "Simon Heck"
+
 class Main():
     def __init__(self) -> None:
         json_url = "https://data.vatsim.net/v3/vatsim-data.json"
@@ -30,11 +31,8 @@ class Main():
         JSON_timer.start()
         automated_strip_printing.start()
         user_input.start()
-    
 
-          
 ## TODO
-# What if flight plan amended
 # GUI
 # easier changing of airport Lat-Long Points
 # add more graceful thread closure
