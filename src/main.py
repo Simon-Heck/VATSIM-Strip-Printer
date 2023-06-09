@@ -28,7 +28,6 @@ if __name__ == "__main__":
     JSON_timer_thread = threading.Thread(target=json_refresh.start_refreshing)
     # main thread:
     automated_strip_printing = threading.Thread(target=printer.autoprint)
-    
     # start all threads
     JSON_timer_thread.start()
     automated_strip_printing.start()
