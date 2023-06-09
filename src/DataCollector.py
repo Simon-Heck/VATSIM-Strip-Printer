@@ -31,7 +31,6 @@ class DataCollector:
         # else:
         self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
             
-    
     def get_callsign_data(self, callsign):
         return self.callsign_list.get(callsign)
     
