@@ -115,7 +115,9 @@ class Printer:
         
         #TODO whaat if contoller only removed simbrief stuff from route
 
-    def format_cruise_altitude(self, altitude):
+    def format_cruise_altitude(self, altitude:str):
+        formatted_altitude = altitude.upper()
+        formatted_altitude = formatted_altitude.replace("FL", "")
         formatted_altitude = altitude[:-2]
         if len(formatted_altitude) < 2:
             formatted_altitude = f"00{formatted_altitude}"
