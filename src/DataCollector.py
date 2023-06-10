@@ -1,13 +1,18 @@
 import requests
-
+from Printer import Printer
+import time
+import pickle
 __author__ = "Simon Heck"
 
 class DataCollector:
 
-    def __init__(self, json_url:str, departure_airport:str) -> None:
+    def __init__(self, json_url:str, departure_airport:str, printer:Printer, cached_printed_departures:list, cached_departures_file_path:str) -> None:
         self.callsign_list = {}
         self.json_url = json_url
         self.departure_airport = departure_airport
+        self.printer = printer
+        self.printed_callsigns = cached_printed_departures
+        self.cached_departures_file_path = cached_departures_file_path
 
     def check_for_updates(self):
         self.update_json(self.json_url)
@@ -19,11 +24,33 @@ class DataCollector:
     def get_callsign_list(self):
         return self.callsign_list
     
-    def add_callsign_to_dep_list(self, pilot_callsign, pilot_associated_with_callsign):
-        self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
-            
-    def get_callsign_data(self, callsign):
-        return self.callsign_list.get(callsign)
+    def add_callsign_to_dep_list(self, pilot_callsign:str, pilot_associated_with_callsign:dict):
+        # was callsign amended and was the callsign already in the departure list
+        if pilot_callsign in self.callsign_list and pilot_associated_with_callsign['flight_plan']['route'] != self.callsign_list[pilot_callsign]['flight_plan']['route']:
+            self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
+            self.printer.print_callsign_data(self.callsign_list[pilot_callsign], pilot_callsign)
+        else:
+            self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
+
+    def scan_for_new_aircraft_automatic(self):
+        
+        while(True):
+            callsign_table = self.get_callsign_list()
+            for callsign_to_print in callsign_table:
+                if callsign_to_print not in self.printed_callsigns:
+                    self.printer.print_callsign_data(callsign_table.get(callsign_to_print), callsign_to_print)
+                    self.printed_callsigns.append(callsign_to_print)
+                # auto_update cached callsigns
+            file = open(self.cached_departures_file_path, 'wb')
+            pickle.dump(self.printed_callsigns, file)
+            file.close()
+            time.sleep(1)
+
+    def get_callsign_data(self, callsign) -> dict:
+        if callsign not in self.callsign_list:
+            return None
+        else:
+            return self.callsign_list.get(callsign)
     
     def in_geographical_region(self, airport:str, airplane_lat_long:tuple) -> bool:
         # Dict of the form: { airport ICAO : ((NW lat_long point),(SE lat_long point)) }
@@ -31,8 +58,9 @@ class DataCollector:
             "KATL" : ((33.66160132114376, -84.4567732450538),(33.61374004734878,-84.39639798954067)),
             "KCLT" : ((35.2323196840276,-80.97532070484328),(35.19812613679431,-80.92504772311364))
         }
-        #KATL NW Lat_Long point
+        
         nw_lat_long_point, se_lat_long_point = airports.get(airport)
+        #KATL NW Lat_Long point
         northern_latitude, western_longitude = nw_lat_long_point
         #KATL SE Lat_long point
         southern_latitude, eastern_longitude = se_lat_long_point
@@ -57,8 +85,16 @@ class DataCollector:
                     # to access, use: self.callsign_list.get(**callsign**)
                     # that will return the portion of the JSON with all of the pilot's info from when the system added them(flightplan, CID, etc.)
                     self.add_callsign_to_dep_list(pilot_callsign, current_pilot)
+                elif (pilot_departure_airport == self.departure_airport) and (not self.in_geographical_region(self.departure_airport, lat_long_tuple)) and (pilot_callsign in self.callsign_list):
+                    self.remove_callsign_from_lists(pilot_callsign)
+            except TypeError as te:
+                pass        
             except Exception as e:
-                pass               
+                print(e)  
+
+    def remove_callsign_from_lists(self, callsign_to_remove):
+        self.callsign_list.pop(callsign_to_remove)
+        self.printed_callsigns.pop(callsign_to_remove)
 
     def update_json(self, json_url):
         r = requests.get(json_url)
