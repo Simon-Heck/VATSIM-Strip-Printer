@@ -48,7 +48,7 @@ class Printer:
 
     def format_flightplan(self, flightplan:str, departure:str):
 
-        flightplan.replace(".", " ")
+        flightplan = flightplan.replace(".", " ")
         # split flightplan into a list of the routes waypoints
         flightplan_list = flightplan.split(' ')
         # remove any DCT's from the waypoint list
