@@ -40,6 +40,8 @@ class Printer:
             exit_fix = self.match_ATL_exit_fix(flightplan)
             computer_id = self.generate_random_id()
             amendment_number = str(int(callsign_data['flight_plan']['revision_id'])-1)
+            if amendment_number == '0':
+                amendment_number = ""
 
             print(f"{callsign}, {departure_airport}, {ac_type}, {departure_time}, {cruise_alt}, {flightplan}, {assigned_sq}, {destination}, {enroute_time}, {cid}, {exit_fix}, {computer_id}, {amendment_number}")
             #print flight strip on printer

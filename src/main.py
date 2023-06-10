@@ -68,7 +68,6 @@ class Main():
         user_input.start()
 
 ## TODO
-# remove callsign that departs
 # GUI
 # easier changing of airport Lat-Long Points
 # add more graceful thread closure
