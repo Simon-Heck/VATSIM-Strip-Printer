@@ -33,6 +33,7 @@ class Main():
         user_input.start()
 
 ## TODO
+# Enable ability to pickle currently saved "printed callsigns"
 # GUI
 # easier changing of airport Lat-Long Points
 # add more graceful thread closure
