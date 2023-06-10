@@ -74,7 +74,7 @@ class Printer:
         if len(modified_flightplan) < len(flightplan):
             is_route_amended = True
 
-        modified_flightplan.replace(".", " ")
+        modified_flightplan = modified_flightplan.replace(".", " ")
         modified_flightplan = modified_flightplan.strip()
         # split flightplan into a list of the routes waypoints
         flightplan_list = modified_flightplan.split(' ')
