@@ -1,15 +1,18 @@
 import requests
 from Printer import Printer
 import time
+import pickle
 __author__ = "Simon Heck"
 
 class DataCollector:
 
-    def __init__(self, json_url:str, departure_airport:str, printer:Printer) -> None:
+    def __init__(self, json_url:str, departure_airport:str, printer:Printer, cached_printed_departures:list, cached_departures_file_path:str) -> None:
         self.callsign_list = {}
         self.json_url = json_url
         self.departure_airport = departure_airport
         self.printer = printer
+        self.printed_callsigns = cached_printed_departures
+        self.cached_departures_file_path = cached_departures_file_path
 
     def check_for_updates(self):
         self.update_json(self.json_url)
@@ -30,14 +33,18 @@ class DataCollector:
             self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
 
     def scan_for_new_aircraft_automatic(self):
-        printed_callsigns = []
+        
         while(True):
             callsign_table = self.get_callsign_list()
             for callsign_to_print in callsign_table:
-                if callsign_to_print not in printed_callsigns:
+                if callsign_to_print not in self.printed_callsigns:
                     self.printer.print_callsign_data(callsign_table.get(callsign_to_print), callsign_to_print)
-                    printed_callsigns.append(callsign_to_print)
-            time.sleep(0.5)
+                    self.printed_callsigns.append(callsign_to_print)
+                # auto_update cached callsigns
+            file = open(self.cached_departures_file_path, 'wb')
+            pickle.dump(self.printed_callsigns, file)
+            file.close()
+            time.sleep(1)
 
     def get_callsign_data(self, callsign) -> dict:
         if callsign not in self.callsign_list:
@@ -78,10 +85,16 @@ class DataCollector:
                     # to access, use: self.callsign_list.get(**callsign**)
                     # that will return the portion of the JSON with all of the pilot's info from when the system added them(flightplan, CID, etc.)
                     self.add_callsign_to_dep_list(pilot_callsign, current_pilot)
+                elif (pilot_departure_airport == self.departure_airport) and (not self.in_geographical_region(self.departure_airport, lat_long_tuple)) and (pilot_callsign in self.callsign_list):
+                    self.remove_callsign_from_lists(pilot_callsign)
             except TypeError as te:
                 pass        
             except Exception as e:
                 print(e)  
+
+    def remove_callsign_from_lists(self, callsign_to_remove):
+        self.callsign_list.pop(callsign_to_remove)
+        self.printed_callsigns.pop(callsign_to_remove)
 
     def update_json(self, json_url):
         r = requests.get(json_url)

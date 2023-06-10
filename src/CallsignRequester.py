@@ -1,5 +1,6 @@
 from Printer import Printer
 from DataCollector import DataCollector
+import time
 
 __author__ = "Simon Heck"
 
@@ -8,6 +9,7 @@ class CallsignRequester:
         self.printer = printer
         self.data_collector = data_collector
     def request_callsign_from_user(self) -> str:
+        time.sleep(0.5)
         while(True):
             callsign_to_print = input("Enter Callsign: ")
             self.request_callsign(callsign_to_print)

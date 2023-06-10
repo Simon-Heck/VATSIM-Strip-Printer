@@ -39,7 +39,7 @@ class Printer:
             cid = callsign_data['cid']
             exit_fix = self.match_ATL_exit_fix(flightplan)
             computer_id = self.generate_random_id()
-            amendment_number = callsign_data['flight_plan']['revision_id']
+            amendment_number = str(int(callsign_data['flight_plan']['revision_id'])-1)
 
             print(f"{callsign}, {departure_airport}, {ac_type}, {departure_time}, {cruise_alt}, {flightplan}, {assigned_sq}, {destination}, {enroute_time}, {cid}, {exit_fix}, {computer_id}, {amendment_number}")
             #print flight strip on printer
@@ -47,22 +47,10 @@ class Printer:
         else:
             print(f"Could not find {requested_callsign} in ATL proposals. Loser.")
     def remove_amendment_marking(self, route) -> str:
-        """_summary_
-            removes '+' from start of route if it exists. done in place
-        Args:
-            route (str): _description_
-
-        Returns:
-            bool: whether the flight plan was amended or not
-        """
-        # ret_string = route
-        amended = False
         amendment_char_index = route.find("+")
         if  amendment_char_index != -1 and amendment_char_index == 0:
-            amended = True
             if len(route) > 1:
                 route = route[amendment_char_index+1:]
-                
         return route
 
     def format_flightplan(self, flightplan:str, departure:str):
@@ -103,10 +91,7 @@ class Printer:
                 return f"{build_string} ./."
             
             build_string = f"{build_string}{flightplan_list[i]} "
-        # if route_amended:
-        #     build_string = f"+{departure} {build_string}+"
-        # else:
-        #     build_string = f"{departure} {build_string}"
+
         if is_route_amended:
             build_string = build_string.strip()
             return f"+{build_string}+"
