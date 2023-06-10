@@ -18,9 +18,9 @@ class Printer:
         zebra.setqueue(Q[0])
         # callsign_data = self.data_collector.get_callsign_data(requested_callsign)
         if requested_callsign == "" or None:
-            print("blank")
+            # print("blank")
             # print blank strip
-            # zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB140,1,0,L^FO5,1470^FD^A0b,40,40^FS^FB200,1,0,L^FO60,1400^FD^A0b,40,40^FS^FO130,1530^FD^A0b,40,40^FS^FO130,1320^BCB,40,N,N,N,A^FD^FS^FB200,1,0,R^FO45,1320^FD^A0b,80,80^FS^FO5,1200^FD^A0b,40,40^FS^FO80,1190^FD^A0b,40,40^FS^FO145,1220^FD^A0b,40,40^FS^FO5,1050^FD^A0b,40,40^FS^FB500,1,0,L^FO5,450^FD^A0b,40,40^FS^FB500,1,0,L^FO70,450^FD^A0b,40,40^FS^^FB500,1,0,L^FO135,450^FD^A0b,40,40^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
+            zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB140,1,0,L^FO5,1470^FD^A0b,40,40^FS^FB200,1,0,L^FO60,1400^FD^A0b,40,40^FS^FO130,1530^FD^A0b,40,40^FS^FO130,1320^BCB,40,N,N,N,A^FD^FS^FB200,1,0,R^FO45,1320^FD^A0b,80,80^FS^FO5,1200^FD^A0b,40,40^FS^FO80,1190^FD^A0b,40,40^FS^FO145,1220^FD^A0b,40,40^FS^FO5,1050^FD^A0b,40,40^FS^FB500,1,0,L^FO5,450^FD^A0b,40,40^FS^FB500,1,0,L^FO70,450^FD^A0b,40,40^FS^^FB500,1,0,L^FO135,450^FD^A0b,40,40^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
         
         elif callsign_data is not None:
 
@@ -43,9 +43,9 @@ class Printer:
             if amendment_number == '0':
                 amendment_number = ""
 
-            print(f"{callsign}, {departure_airport}, {ac_type}, {departure_time}, {cruise_alt}, {flightplan}, {assigned_sq}, {destination}, {enroute_time}, {cid}, {exit_fix}, {computer_id}, {amendment_number}")
+            # print(f"{callsign}, {departure_airport}, {ac_type}, {departure_time}, {cruise_alt}, {flightplan}, {assigned_sq}, {destination}, {enroute_time}, {cid}, {exit_fix}, {computer_id}, {amendment_number}")
             #print flight strip on printer
-            # zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB250,1,0,L^FO5,1370^FD{callsign}^A0b,40,40^FS^FB200,1,0,L^FO60,1400^FD{ac_type}^A0b,40,40^FS^FO130,1530^FD{computer_id}^A0b,40,40^FS^FO130,1320^BCB,40,N,N,N,A^FD{cid}^FS^FB200,1,0,R^FO45,1320^FD{exit_fix}^A0b,80,80^FS^FO5,1200^FD{assigned_sq}^A0b,40,40^FS^FO80,1190^FD{departure_time}^A0b,40,40^FS^FO145,1220^FD{cruise_alt}^A0b,40,40^FS^FO5,1050^FD{departure_airport}^A0b,40,40^FS^FB500,1,0,L^FO5,450^FD{flightplan}^A0b,40,40^FS^FB500,1,0,L^FO70,450^FD{destination}^A0b,40,40^FS^^FB500,1,0,L^FO135,450^FD{remarks}^A0b,40,40^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
+            zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB250,1,0,L^FO5,1370^FD{callsign}^A0b,40,40^FS^FB200,1,0,L^FO60,1400^FD{ac_type}^A0b,40,40^FS^FO130,1530^FD{computer_id}^A0b,40,40^FS^FO130,1320^BCB,40,N,N,N,A^FD{cid}^FS^FB200,1,0,R^FO45,1320^FD{exit_fix}^A0b,80,80^FS^FO5,1200^FD{assigned_sq}^A0b,40,40^FS^FO80,1190^FD{departure_time}^A0b,40,40^FS^FO145,1220^FD{cruise_alt}^A0b,40,40^FS^FO5,1050^FD{departure_airport}^A0b,40,40^FS^FB500,1,0,L^FO5,450^FD{flightplan}^A0b,40,40^FS^FB500,1,0,L^FO70,450^FD{destination}^A0b,40,40^FS^^FB500,1,0,L^FO135,450^FD{remarks}^A0b,40,40^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
         else:
             print(f"Could not find {requested_callsign} in ATL proposals. Loser.")
     def remove_amendment_marking(self, route) -> str:
@@ -156,4 +156,5 @@ class Printer:
         r1 = random.randint(0,9)
         r2 = random.randint(0,9)
         r3 = random.randint(0,9)
+        return f"{r1}{r2}{r3}"
         return f"{r1}{r2}{r3}"
