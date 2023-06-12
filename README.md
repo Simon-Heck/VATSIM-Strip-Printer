@@ -10,6 +10,9 @@ Version: Python 3.11.3
   * Expand functionality to any airport. Currently only supports KATL and KCLT
   * Add GUI elements to the program
   * Allow easier editing of Lat-Long points for defining geographical areas(adding more airports)
+  * LAT/LONG information stored in a JSON. GUI supports ability to input LAT/Long points for new airports
+  * Different settings that control different variables/things to be printed on the strip.
+  * Does TDLS normally print strips?
 
 # Completed:
   * ~~Handle edge cases: ie. During long event, pilot departs, but later reconnects with same callsign but different aircraft and flightplan. likely add logic to detect when stored callsign is airborne amd remove from list~~
@@ -24,7 +27,7 @@ pip install zpl
 pip install zebra
 pip install requests
 ```
-[Run python on main.py](src/main.py). For example:
+Run python on [main.py](src/main.py). For example:
 ```
 python main.py
 ```

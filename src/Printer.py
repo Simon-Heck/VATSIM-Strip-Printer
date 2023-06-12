@@ -157,4 +157,3 @@ class Printer:
         r2 = random.randint(0,9)
         r3 = random.randint(0,9)
         return f"{r1}{r2}{r3}"
-        return f"{r1}{r2}{r3}"
