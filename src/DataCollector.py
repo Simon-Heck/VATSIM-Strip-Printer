@@ -108,7 +108,8 @@ class DataCollector:
                 pilot_departure_airport = current_pilot['flight_plan']['departure']
                 lat_long_tuple = (current_pilot['latitude'], current_pilot['longitude'])
                 pilot_callsign = current_pilot['callsign'].upper()
-                if pilot_departure_airport == self.departure_airport and self.in_geographical_region(self.departure_airport, lat_long_tuple):
+                if pilot_departure_airport == self.departure_airport:
+                # and self.in_geographical_region(self.departure_airport, lat_long_tuple):
                     # Save callsign of pilot and associated JSON Info
                     # to access, use: self.callsign_list.get(**callsign**)
                     # that will return the portion of the JSON with all of the pilot's info from when the system added them(flightplan, CID, etc.)

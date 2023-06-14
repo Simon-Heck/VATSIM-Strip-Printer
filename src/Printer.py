@@ -55,11 +55,32 @@ class Printer:
         route = route.replace("+", "")
         return route
     def format_remarks(self, remark_string:str):
-        try:
-            ret_string = remark_string.split("RMK/")
-        except ValueError as e:
-            return remark_string 
+        # remove voice type
+        if "/V/" in remark_string:
+            remark_string = remark_string.replace("/V/", "")
 
+        if "/T/" in remark_string:
+            remark_string = remark_string.replace("/T/", "")
+
+        if "/R/" in remark_string:
+            remark_string = remark_string.replace("/R/", "")
+        # remove double spaces
+        if "  " in remark_string:
+            ret_string = remark_string.replace("  ", " ")
+
+        if remark_string == "":
+            return ""
+        string_list = remark_string.split("RMK/")
+        if len(string_list) > 1:
+            ret_string = f"{string_list[1][:18]}"
+        else:
+            ret_string = string_list[0]
+
+        if(len(ret_string)) < 18:
+            return ret_string
+        else:
+            return f"{ret_string} ***"
+        
     def format_flightplan(self, flightplan:str, departure:str):
         # has the flight plan been amended
         # modified_flightplan = flightplan
