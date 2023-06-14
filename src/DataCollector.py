@@ -26,7 +26,12 @@ class DataCollector:
     
     def add_callsign_to_dep_list(self, pilot_callsign:str, pilot_associated_with_callsign:dict):
         # was callsign's route amended and is the callsign already in the departure list
-        if pilot_callsign in self.callsign_list and pilot_associated_with_callsign['flight_plan']['route'] != self.callsign_list[pilot_callsign]['flight_plan']['route']:
+        new_pilot_route:str = pilot_associated_with_callsign['flight_plan']['route']
+        current_pilot_route:str = self.callsign_list[pilot_callsign]['flight_plan']['route']
+        if '+' in new_pilot_route:
+            new_pilot_route = new_pilot_route.replace('+', '')
+            
+        if pilot_callsign in self.callsign_list and new_pilot_route != current_pilot_route:
             self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
             self.printer.print_callsign_data(self.callsign_list[pilot_callsign], pilot_callsign)
         else:
@@ -54,6 +59,8 @@ class DataCollector:
     
     def in_geographical_region(self, airport:str, airplane_lat_long:tuple) -> bool:
         # Dict of the form: { airport ICAO : ((NW lat_long point),(SE lat_long point))}
+        # TODO create multiple dicts for certain airport groupings(allowing strips to be printed from multiple fields.) 
+        # IE: A80SAT = {"KPDK" : ((33.885843...)), "KAHN" : ((33.95407...,))}. param airport can become a string that tells which DICT to use
         airports = {
         "KATL" : ((33.66160132114376, -84.4567732450538),(33.61374004734878,-84.39639798954067)),
         "KCLT" : ((35.2323196840276,-80.97532070484328),(35.19812613679431,-80.92504772311364)),
@@ -108,8 +115,7 @@ class DataCollector:
                 pilot_departure_airport = current_pilot['flight_plan']['departure']
                 lat_long_tuple = (current_pilot['latitude'], current_pilot['longitude'])
                 pilot_callsign = current_pilot['callsign'].upper()
-                if pilot_departure_airport == self.departure_airport:
-                # and self.in_geographical_region(self.departure_airport, lat_long_tuple):
+                if pilot_departure_airport == self.departure_airport and self.in_geographical_region(self.departure_airport, lat_long_tuple):
                     # Save callsign of pilot and associated JSON Info
                     # to access, use: self.callsign_list.get(**callsign**)
                     # that will return the portion of the JSON with all of the pilot's info from when the system added them(flightplan, CID, etc.)

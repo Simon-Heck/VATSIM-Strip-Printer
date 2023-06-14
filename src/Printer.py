@@ -58,28 +58,29 @@ class Printer:
         # remove voice type
         if "/V/" in remark_string:
             remark_string = remark_string.replace("/V/", "")
-
         if "/T/" in remark_string:
             remark_string = remark_string.replace("/T/", "")
-
         if "/R/" in remark_string:
             remark_string = remark_string.replace("/R/", "")
+
         # remove double spaces
         if "  " in remark_string:
             ret_string = remark_string.replace("  ", " ")
-
+        # no text in remarks section(after deletion of voice type)
         if remark_string == "":
             return ""
+        
+        # Split remark text into two sections and takes the data in the second half. Essentially deletes PBN data from the text. If no RMK/ exits, it will just use the first 18 characters
         string_list = remark_string.split("RMK/")
         if len(string_list) > 1:
             ret_string = f"{string_list[1][:18]}"
         else:
             ret_string = string_list[0]
-
+        # If the remaining remarks string has more than 18 characters, append a '***' to the end
         if(len(ret_string)) < 18:
             return ret_string
         else:
-            return f"{ret_string} ***"
+            return f"{ret_string}***"
         
     def format_flightplan(self, flightplan:str, departure:str):
         # has the flight plan been amended
@@ -126,7 +127,7 @@ class Printer:
         else:
             return build_string.strip()
         
-        #TODO whaat if contoller only removed simbrief stuff from route
+        #TODO whaat if contoller only removed simbrief stuff from route? The system currently sees it as a route change
 
     def format_cruise_altitude(self, altitude:str):
         formatted_altitude = altitude.upper()
