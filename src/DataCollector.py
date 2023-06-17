@@ -24,18 +24,38 @@ class DataCollector:
     def get_callsign_list(self):
         return self.callsign_list
     
-    def add_callsign_to_dep_list(self, pilot_callsign:str, pilot_associated_with_callsign:dict):
+    def add_callsign_to_dep_list(self, pilot_callsign:str, new_pilot_data_associated_with_callsign:dict):
         # was callsign's route amended and is the callsign already in the departure list
-        new_pilot_route:str = pilot_associated_with_callsign['flight_plan']['route']
-        current_pilot_route:str = self.callsign_list[pilot_callsign]['flight_plan']['route']
-        if '+' in new_pilot_route:
-            new_pilot_route = new_pilot_route.replace('+', '')
-            
-        if pilot_callsign in self.callsign_list and new_pilot_route != current_pilot_route:
-            self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
+        
+        if pilot_callsign in self.callsign_list and new_pilot_data_associated_with_callsign['flight_plan']['route'] != self.callsign_list[pilot_callsign]['flight_plan']['route']:
+            self.callsign_list[pilot_callsign] = new_pilot_data_associated_with_callsign
             self.printer.print_callsign_data(self.callsign_list[pilot_callsign], pilot_callsign)
-        else:
-            self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
+# ---------- WIP Code:
+        # new_pilot_route:str = pilot_associated_with_callsign['flight_plan']['route']
+        # current_pilot_route:str = self.callsign_list[pilot_callsign]['flight_plan']['route']
+        # if '+' in new_pilot_route:
+        #     new_pilot_route = new_pilot_route.replace('+', '')
+            
+        # if pilot_callsign in self.callsign_list and new_pilot_route != current_pilot_route:
+        #     self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
+        #     self.printer.print_callsign_data(self.callsign_list[pilot_callsign], pilot_callsign)
+        # else:
+        #     self.callsign_list[pilot_callsign] = pilot_associated_with_callsign
+# -----------
+        # new_pilot_route:str = new_pilot_data_associated_with_callsign['flight_plan']['route']
+        # if '+' in new_pilot_route:
+        #     new_pilot_route = new_pilot_route.replace('+', '')
+
+        # if pilot_callsign in self.callsign_list:
+           
+        #     current_pilot_route:str = self.callsign_list[pilot_callsign]['flight_plan']['route']
+
+        #     if new_pilot_route != current_pilot_route:
+        #         self.callsign_list[pilot_callsign] = new_pilot_data_associated_with_callsign
+        #         self.printer.print_callsign_data(self.callsign_list[pilot_callsign], pilot_callsign)
+        # else:
+        #     new_pilot_data_associated_with_callsign['flight_plan']['route'] = new_pilot_route
+        #     self.callsign_list[pilot_callsign] = new_pilot_data_associated_with_callsign
 
     def scan_for_new_aircraft_automatic(self):
         

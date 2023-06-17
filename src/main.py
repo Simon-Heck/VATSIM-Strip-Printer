@@ -13,8 +13,9 @@ class Main():
         
         json_url = "https://data.vatsim.net/v3/vatsim-data.json"
         # cached_callsign_path = "./cached_departures_that_have_been_printed"
+        # Full path used for debugging
         cached_callsign_path = "C:\\Users\\simon\\OneDrive\\Documents\\Coding Projects\\strip-data-collector\\src\\cached_departures_that_have_been_printed"
-        departure_airport = "KCLT"
+        departure_airport = "KATL"
 
         printed_callsigns = []
         printed_callsign_file = open(cached_callsign_path, "rb")
@@ -27,7 +28,7 @@ class Main():
                 response = input("Do you want to print all departures on the ground? Reply with a '1' for yes, '0' for no: ")
                 print_all_departures = bool(int(response))
                 if(print_all_departures):
-                    response = input(f"ARE YOU SURE? THIS WILL PRINT EVERY AIRCRAFT ON THE GROUND! (There are {len(current_callsigns_cached)} strips stored...). Reply '1' for yes, '0' for no: ")
+                    response = input(f"This will possibly print up to {len(current_callsigns_cached)} strips. Reply '1' for yes, '0' for no: ")
                     print_all_departures = bool(int(response))
                     
                 if(print_all_departures):
