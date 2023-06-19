@@ -15,11 +15,18 @@ class Main():
         # cached_callsign_path = "./cached_departures_that_have_been_printed"
         # Full path used for debugging
         cached_callsign_path = "C:\\Users\\simon\\OneDrive\\Documents\\Coding Projects\\strip-data-collector\\src\\cached_departures_that_have_been_printed"
-        departure_airport = "KATL"
-
+        control_area = "A80SAT"
+        # departure_airport = "KATL"
+        
         printed_callsigns = []
-        printed_callsign_file = open(cached_callsign_path, "rb")
-        current_callsigns_cached = pickle.load(printed_callsign_file)
+        # TODO: Handle empty pickle file
+        try:
+            printed_callsign_file = open(cached_callsign_path, "rb")
+            current_callsigns_cached = pickle.load(printed_callsign_file)
+        except EOFError:
+            current_callsigns_cached = printed_callsigns
+            printed_callsign_file = open(cached_callsign_path, "wb")
+            pickle.dump(printed_callsigns, printed_callsign_file)
         printed_callsign_file.close()
 
         print_all_departures = False
@@ -49,7 +56,7 @@ class Main():
         printed_callsigns = current_callsigns_cached
         
         printer = Printer() 
-        data_collector = DataCollector(json_url, departure_airport, printer, printed_callsigns, cached_callsign_path)
+        data_collector = DataCollector(json_url, control_area, printer, printed_callsigns, cached_callsign_path)
         callsign_requester = CallsignRequester(printer, data_collector)
         json_refresh = JSONRefreshTimer(data_collector)
 

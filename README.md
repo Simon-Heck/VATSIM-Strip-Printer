@@ -6,6 +6,8 @@ Version: Python 3.11.3
   * Technical Advisor: Zackaria B.
 
 # TODO:
+  * don't print barcode for A80 departures
+  * PRINT SIGMENNNNNTS OR SOMETHIGN
   * Don't print VFR strips/Don't print amended VFR strips?
   * sync data refresh with VATSIM data refresh cycle
   * Expand functionality to any airport. Currently only supports KATL and KCLT
