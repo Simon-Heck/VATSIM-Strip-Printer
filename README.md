@@ -7,7 +7,7 @@ Version: Python 3.11.3
 
 # TODO:
   * don't print barcode for A80 departures
-  * PRINT SIGMENNNNNTS OR SOMETHIGN
+  * Print Sigmets
   * Don't print VFR strips/Don't print amended VFR strips?
   * sync data refresh with VATSIM data refresh cycle
   * Clean up Code for new airports and adding new airports. Store in JSON?
