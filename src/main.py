@@ -15,7 +15,7 @@ class Main():
         # cached_callsign_path = "./cached_departures_that_have_been_printed"
         # Full path used for debugging
         cached_callsign_path = "C:\\Users\\simon\\OneDrive\\Documents\\Coding Projects\\strip-data-collector\\src\\cached_departures_that_have_been_printed"
-        control_area = "A80SAT"
+        control_area = "KATL"
         # departure_airport = "KATL"
         
         printed_callsigns = []

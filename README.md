@@ -10,14 +10,11 @@ Version: Python 3.11.3
   * PRINT SIGMENNNNNTS OR SOMETHIGN
   * Don't print VFR strips/Don't print amended VFR strips?
   * sync data refresh with VATSIM data refresh cycle
-  * Expand functionality to any airport. Currently only supports KATL and KCLT
+  * Clean up Code for new airports and adding new airports. Store in JSON?
   * Add GUI elements to the program
-  * Allow easier editing of Lat-Long points for defining geographical areas(adding more airports)
-  * LAT/LONG information stored in a JSON. GUI supports ability to input LAT/Long points for new airports
-  * Different settings that control different variables/things to be printed on the strip.
-  * Does TDLS normally print strips?
 
 # Completed:
+  * ~~Expand functionality to any airport. Currently only supports KATL and KCLT~~
   * ~~Handle edge cases: ie. During long event, pilot departs, but later reconnects with same callsign but different aircraft and flightplan. likely add logic to detect when stored callsign is airborne amd remove from list~~
   * ~~Add in amendment numbers and amended flightplans to strips~~
 
