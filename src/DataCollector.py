@@ -204,7 +204,7 @@ class DataCollector:
             if new_pilot_route != current_pilot_route:
                 # pilot has received a reroute
                 self.callsign_list[pilot_callsign] = new_pilot_data_associated_with_callsign
-                self.printer.print_callsign_data(self.callsign_list[pilot_callsign], pilot_callsign)
+                self.printer.print_callsign_data(self.callsign_list[pilot_callsign], pilot_callsign, self.control_area)
         else:
             # new_pilot_data_associated_with_callsign['flight_plan']['route'] = new_pilot_route
             self.callsign_list[pilot_callsign] = new_pilot_data_associated_with_callsign
@@ -216,7 +216,7 @@ class DataCollector:
             # TODO, lock callsign list to leep them synced
             for callsign_to_print in callsign_table:
                 if callsign_to_print not in self.printed_callsigns:
-                    self.printer.print_callsign_data(callsign_table.get(callsign_to_print), callsign_to_print)
+                    self.printer.print_callsign_data(callsign_table.get(callsign_to_print), callsign_to_print, self.control_area)
                     self.printed_callsigns.append(callsign_to_print)
                 # auto_update cached callsigns
             file = open(self.cached_departures_file_path, 'wb')

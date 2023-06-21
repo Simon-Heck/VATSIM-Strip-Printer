@@ -12,7 +12,7 @@ class Printer:
         callsign = input("Enter Callsign: ")
         return callsign.upper()
 
-    def print_callsign_data(self, callsign_data, requested_callsign):
+    def print_callsign_data(self, callsign_data, requested_callsign, control_area):
         zebra = Zebra()
         Q = zebra.getqueues()
         zebra.setqueue(Q[0])
@@ -23,7 +23,6 @@ class Printer:
             zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB140,1,0,L^FO5,1470^FD^A0b,40,40^FS^FB200,1,0,L^FO60,1400^FD^A0b,40,40^FS^FO130,1530^FD^A0b,40,40^FS^FO130,1320^BCB,40,N,N,N,A^FD^FS^FB200,1,0,R^FO45,1320^FD^A0b,80,80^FS^FO5,1200^FD^A0b,40,40^FS^FO80,1190^FD^A0b,40,40^FS^FO145,1220^FD^A0b,40,40^FS^FO5,1050^FD^A0b,40,40^FS^FB500,1,0,L^FO5,450^FD^A0b,40,40^FS^FB500,1,0,L^FO70,450^FD^A0b,40,40^FS^^FB500,1,0,L^FO135,450^FD^A0b,40,40^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
         
         elif callsign_data is not None:
-
             callsign = callsign_data['callsign']
             departure_airport = callsign_data['flight_plan']['departure']
             ac_type = callsign_data['flight_plan']['aircraft_faa']
@@ -36,6 +35,8 @@ class Printer:
             remarks = self.format_remarks(callsign_data['flight_plan']['remarks'])
             enroute_time = callsign_data['flight_plan']['enroute_time']
             cid = callsign_data['cid']
+            if control_area != "KATL": #purge barcode if not ATL clearance
+                cid = ""
             exit_fix = self.match_ATL_exit_fix(flightplan)
             computer_id = self.generate_id(callsign_data['flight_plan']['remarks'])
             amendment_number = str(int(callsign_data['flight_plan']['revision_id'])-1)
@@ -114,7 +115,7 @@ class Printer:
             else:
                 i +=1
         
-        # Truncates flightplan route to first 3 waypoints. routes longer than 3 waypoints are represented with a ./. at the end. If amended put ./. outside '+' symbols
+        # Truncates flightplan route to first 3 waypoints. routes longer than 3 waypoints are represented with a . / . at the end. If amended put . / . outside '+' symbols
         build_string = ""
         for i in range(len(flightplan_list)):
             if i >= 3 and is_route_amended:
@@ -122,7 +123,7 @@ class Printer:
                 return  f"+{build_string}+"
             elif i >= 3:
                 build_string = build_string.strip()
-                return f"{build_string}./."
+                return f"{build_string}. / ."
             
             build_string = f"{build_string}{flightplan_list[i]} "
 
@@ -198,8 +199,8 @@ class Printer:
         return f"{r1}{r2}{r3}"
 
     def generate_random_id(self):
-        # TODO if text or blind or receive only pilot, 3rd digit is a letter
         r1 = random.randint(0,9)
+        # Replace 2nd digit with B if blind
         r2 = random.randint(0,9)
         # /R/ /T/ replace with a T/R
         r3 = random.randint(0,9)
