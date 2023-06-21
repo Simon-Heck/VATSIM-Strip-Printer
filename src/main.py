@@ -46,7 +46,7 @@ class Main():
             try:
                 control_area = printerpositions[position]
             except:
-                print("I'm sorry, I don't understand. Setting your position to ATL Clearance Delivery.")
+                print("I'm sorry, I don't understand. Setting your position to ATL Clearance Delivery(Default).")
                 control_area = "KATL"
             try:
                 response = input("Do you want to print all departures on the ground? Reply with a '1' for yes, '0' for no: ")
@@ -56,7 +56,7 @@ class Main():
                     print_all_departures = bool(int(response))
                     
                 if(print_all_departures):
-                    response = input(f"Oh boy, that's gonna be a lot of paper. Do you want to clear the {len(current_callsigns_cached)} cached strips? Reply '1' for yes, '0' for no: ")
+                    response = input(f"Do you want to clear the {len(current_callsigns_cached)} cached strips? Reply '1' for yes, '0' for no: ")
                     current_callsigns_cached = []
                     clear_cache = bool(int(response))
                     if(clear_cache):

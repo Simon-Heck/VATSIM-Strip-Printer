@@ -84,9 +84,9 @@ class Printer:
         # If the remaining remarks string has more than 18 characters, append a '***' to the end
         # TODO: try diffent chars: ○
         if(len(ret_string)) < 18:
-            return f"O{ret_string}"
+            return f"░{ret_string}"
         else:
-            return f"O{ret_string}***"
+            return f"░{ret_string}***"
         
     def format_flightplan(self, flightplan:str, departure:str):
         # has the flight plan been amended
