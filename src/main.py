@@ -12,14 +12,20 @@ class Main():
     def __init__(self) -> None:
         
         json_url = "https://data.vatsim.net/v3/vatsim-data.json"
-        # cached_callsign_path = "./cached_departures_that_have_been_printed"
+        cached_callsign_path = "./cached_departures_that_have_been_printed"
         # Full path used for debugging
-        cached_callsign_path = "C:\\Users\\simon\\OneDrive\\Documents\\Coding Projects\\strip-data-collector\\src\\cached_departures_that_have_been_printed"
-        control_area = "KATL"
+        # cached_callsign_path = "C:\\Users\\simon\\OneDrive\\Documents\\Coding Projects\\strip-data-collector\\src\\cached_departures_that_have_been_printed"
+        printerpositions = {
+            "ATL-CD" : "KATL",
+            "A80-ALL" : "A80ALL",
+            "A80-SAT" : "A80SAT",
+            "ZTL" : "ZTL"
+        }
         # departure_airport = "KATL"
-        
+        control_area = ""        
         printed_callsigns = []
         # TODO: Handle empty pickle file
+
         try:
             printed_callsign_file = open(cached_callsign_path, "rb")
             current_callsigns_cached = pickle.load(printed_callsign_file)
@@ -31,6 +37,17 @@ class Main():
 
         print_all_departures = False
         while(True):
+            print("Please select your control position.")
+            print("Your choices include:")
+            for i in printerpositions:
+                print(i)
+            response = input()
+            position = str(response.upper())
+            try:
+                control_area = printerpositions[position]
+            except:
+                print("I'm sorry, I don't understand. Setting your position to ATL Clearance Delivery.")
+                control_area = "KATL"
             try:
                 response = input("Do you want to print all departures on the ground? Reply with a '1' for yes, '0' for no: ")
                 print_all_departures = bool(int(response))
@@ -39,7 +56,6 @@ class Main():
                     print_all_departures = bool(int(response))
                     
                 if(print_all_departures):
-                    
                     response = input(f"Oh boy, that's gonna be a lot of paper. Do you want to clear the {len(current_callsigns_cached)} cached strips? Reply '1' for yes, '0' for no: ")
                     current_callsigns_cached = []
                     clear_cache = bool(int(response))
