@@ -6,20 +6,20 @@ Version: Python 3.11.3
   * Technical Advisor: Zackaria B.
 
 # TODO:
-  * don't print barcode for A80 SAT departures
+  * Don't print the barcode for A80 SAT departures
   * Add more comments and documentation
-  * Make starting text prompts
+  * Make starting text prompts easier to understand
   * Print Sigmets
   * Don't print VFR strips/Don't print amended VFR strips?
   * sync data refresh with VATSIM data refresh cycle
-  * Clean up Code for new airports and adding new airports. Store in JSON?
+  * Clean up Code for new airports. Add new airports. Store in JSON?
   * Add GUI elements to the program
 
 # Features:
   * Barcode with pilot VATSIM CID on ATL strips(for strip scanning)
   * Truncates route to first 3 waypoints
   * Prints only remarks after RMK/
-  * Multi threaded to simultaneously listen for user input, update JSOn data, and scan for new departures
+  * Multi-threaded to simultaneously listen for user input, update JSOn data, and scan for new departures
   * Others
 
 
