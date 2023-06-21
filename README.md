@@ -6,7 +6,7 @@ Version: Python 3.11.3
   * Technical Advisor: Zackaria B.
 
 # TODO:
-  * don't print barcode for A80 departures
+  * don't print barcode for A80 SAT departures
   * Add more comments and documentation
   * Make starting text prompts
   * Print Sigmets
