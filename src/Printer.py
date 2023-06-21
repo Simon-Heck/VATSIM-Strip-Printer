@@ -28,7 +28,7 @@ class Printer:
             ac_type = callsign_data['flight_plan']['aircraft_faa']
             departure_time = f"P{callsign_data['flight_plan']['deptime']}"
             cruise_alt = self.format_cruise_altitude(callsign_data['flight_plan']['altitude'])
-            flightplan = self.format_flightplan(callsign_data['flight_plan']['route'], departure_airport)
+            flightplan = self.format_flightplan(callsign_data['flight_plan']['route'], departure_airport, callsign_data['flight_plan']['flight_rules'])
             assigned_sq = callsign_data['flight_plan']['assigned_transponder']
             destination = callsign_data['flight_plan']['arrival']
             remarks=callsign_data['flight_plan']['remarks']
@@ -47,11 +47,12 @@ class Printer:
             #print flight strip on printer
             # Delayto allow proper spacing and formating on successive flight strips
             
-            # print(f"{callsign}, {departure_airport}, {ac_type}, {departure_time}, {cruise_alt}, {flightplan}, {assigned_sq}, {destination}, {enroute_time}, {cid}, {exit_fix}, {computer_id}, {amendment_number}, {remarks}")
-            zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB250,1,0,L^FO5,1350^FD{callsign}^A0b,40,40^FS^FB200,1,0,L^FO70,1400^FD{ac_type}^A0b,40,40^FS^FO130,1540^FD{computer_id}^A0b,40,40^FS^FO130,1320^BCB,40,N,N,N,A^FD{cid}^FS^FB200,1,0,R^FO45,1320^FD{exit_fix}^A0b,80,80^FS^FO5,1200^FD{assigned_sq}^A0b,40,40^FS^FO80,1190^FD{departure_time}^A0b,40,40^FS^FO145,1220^FD{cruise_alt}^A0b,40,40^FS^FO5,1050^FD{departure_airport}^A0b,40,40^FS^FB500,1,0,L^FO5,450^FD{flightplan}^A0b,40,40^FS^FB500,1,0,L^FO70,450^FD{destination}^A0b,40,40^FS^^FB500,1,0,L^FO135,450^FD{remarks}^A0b,40,40^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
+            print(f"{callsign}, {departure_airport}, {ac_type}, {departure_time}, {cruise_alt}, {flightplan}, {assigned_sq}, {destination}, {enroute_time}, {cid}, {exit_fix}, {computer_id}, {amendment_number}, {remarks}")
+            # zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB250,1,0,L^FO5,1350^FD{callsign}^A0b,40,40^FS^FB200,1,0,L^FO70,1400^FD{ac_type}^A0b,40,40^FS^FO130,1540^FD{computer_id}^A0b,40,40^FS^FO130,1320^BCB,40,N,N,N,A^FD{cid}^FS^FB200,1,0,R^FO45,1320^FD{exit_fix}^A0b,80,80^FS^FO5,1200^FD{assigned_sq}^A0b,40,40^FS^FO80,1190^FD{departure_time}^A0b,40,40^FS^FO145,1220^FD{cruise_alt}^A0b,40,40^FS^FO5,1050^FD{departure_airport}^A0b,40,40^FS^FB500,1,0,L^FO5,450^FD{flightplan}^A0b,40,40^FS^FB500,1,0,L^FO70,450^FD{destination}^A0b,40,40^FS^^FB500,1,0,L^FO135,450^FD{remarks}^A0b,40,40^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
             time.sleep(3)
         else:
             print(f"Could not find {requested_callsign} in ATL proposals. Loser.")
+
     def remove_amendment_marking(self, route:str) -> str:
         # amendment_char_index = route.find("+")
         # if  amendment_char_index != -1 and amendment_char_index == 0:
@@ -59,6 +60,7 @@ class Printer:
         #         route = route[amendment_char_index+1:]
         route = route.replace("+", "")
         return route
+    
     def format_remarks(self, remark_string:str):
         # remove voice type
         if "/V/" in remark_string:
@@ -88,7 +90,10 @@ class Printer:
         else:
             return f"O{ret_string}***"
         
-    def format_flightplan(self, flightplan:str, departure:str):
+    def format_flightplan(self, flightplan:str, departure:str, flightrules:str):
+        if flightrules == "V" or "S" or "D":
+            return ""
+
         # has the flight plan been amended
         # modified_flightplan = flightplan
         modified_flightplan = self.remove_amendment_marking(flightplan).strip()

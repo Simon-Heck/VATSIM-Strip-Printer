@@ -73,7 +73,7 @@ class Main():
         
         printer = Printer() 
         data_collector = DataCollector(json_url, control_area, printer, printed_callsigns, cached_callsign_path)
-        callsign_requester = CallsignRequester(printer, data_collector)
+        callsign_requester = CallsignRequester(printer, data_collector, control_area)
         json_refresh = JSONRefreshTimer(data_collector)
 
         # initial data grab
