@@ -13,7 +13,7 @@ class Main():
     def __init__(self) -> None:
         
         json_url = "https://data.vatsim.net/v3/vatsim-data.json"
-        cached_callsign_path = "./cached_departures_that_have_been_printed"
+        cached_callsign_path = "./data/cached_departures_that_have_been_printed"
         # Full path used for debugging
         # cached_callsign_path = "C:\\Users\\simon\\OneDrive\\Documents\\Coding Projects\\strip-data-collector\\src\\cached_departures_that_have_been_printed"
         printerpositions = {

@@ -1,6 +1,8 @@
 import random
 from zebra import Zebra
 import time
+import json
+
 
 __author__ = "Simon Heck"
 
@@ -26,6 +28,7 @@ class Printer:
             callsign = callsign_data['callsign']
             departure_airport = callsign_data['flight_plan']['departure']
             ac_type = callsign_data['flight_plan']['aircraft_faa']
+            ac_type = self.format_actype(ac_type)
             departure_time = f"P{callsign_data['flight_plan']['deptime']}"
             cruise_alt = self.format_cruise_altitude(callsign_data['flight_plan']['altitude'])
             flightplan = self.format_flightplan(callsign_data['flight_plan']['route'], departure_airport, callsign_data['flight_plan']['flight_rules'])
@@ -45,10 +48,10 @@ class Printer:
 
             #print flight strip on printer
             # Delayto allow proper spacing and formating on successive flight strips
-            
-            # print(f"{callsign}, {departure_airport}, {ac_type}, {departure_time}, {cruise_alt}, {flightplan}, {assigned_sq}, {destination}, {enroute_time}, {cid}, {exit_fix}, {computer_id}, {amendment_number}, {remarks}")
-            zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB250,1,0,L^FO5,1350^FD{callsign}^A0b,40,40^FS^FB200,1,0,L^FO70,1400^FD{ac_type}^A0b,40,40^FS^FO130,1540^FD{computer_id}^A0b,40,40^FS^FO130,1320^BCB,40,N,N,N,A^FD{cid}^FS^FB200,1,0,R^FO45,1320^FD{exit_fix}^A0b,80,80^FS^FO5,1200^FD{assigned_sq}^A0b,40,40^FS^FO80,1190^FD{departure_time}^A0b,40,40^FS^FO145,1220^FD{cruise_alt}^A0b,40,40^FS^FO5,1050^FD{departure_airport}^A0b,40,40^FS^FB500,1,0,L^FO5,450^FD{flightplan}^A0b,40,40^FS^FB500,1,0,L^FO70,450^FD{destination}^A0b,40,40^FS^^FB500,1,0,L^FO135,450^FD{remarks}^A0b,40,40^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
             time.sleep(3)
+            print(f"{callsign}, {departure_airport}, {ac_type}, {departure_time}, {cruise_alt}, {flightplan}, {assigned_sq}, {destination}, {enroute_time}, {cid}, {exit_fix}, {computer_id}, {amendment_number}, {remarks}")
+            # zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB250,1,0,L^FO5,1350^FD{callsign}^A0b,40,40^FS^FB200,1,0,L^FO70,1400^FD{ac_type}^A0b,40,40^FS^FO130,1540^FD{computer_id}^A0b,40,40^FS^FO130,1320^BCB,40,N,N,N,A^FD{cid}^FS^FB200,1,0,R^FO45,1320^FD{exit_fix}^A0b,80,80^FS^FO5,1200^FD{assigned_sq}^A0b,40,40^FS^FO80,1190^FD{departure_time}^A0b,40,40^FS^FO145,1220^FD{cruise_alt}^A0b,40,40^FS^FO5,1050^FD{departure_airport}^A0b,40,40^FS^FB500,1,0,L^FO5,450^FD{flightplan}^A0b,40,40^FS^FB500,1,0,L^FO70,450^FD{destination}^A0b,40,40^FS^^FB500,1,0,L^FO135,450^FD{remarks}^A0b,40,40^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
+            
         else:
             print(f"Could not find {requested_callsign} in {control_area} proposals. Nice going, dumbass.")
 
@@ -85,13 +88,13 @@ class Printer:
         # If the remaining remarks string has more than 18 characters, append a '***' to the end
         # TODO: try diffent chars: ○
         if(len(ret_string)) < 18:
-            return f"O{ret_string}"
+            return f"░{ret_string}"
         else:
-            return f"O{ret_string}***"
+            return f"░{ret_string}***"
         
     def format_flightplan(self, flightplan:str, departure:str, flightrules:str):
-        # If the flight plan is NOT IFR, do not print the route.
-        if flightrules != "I":
+        # If the flight plan is NOT IFR or DVFR, do not print the route.
+        if flightrules != "I" and flightrules != "D":
             return ""
 
         # has the flight plan been amended
@@ -210,3 +213,25 @@ class Printer:
         # /R/ /T/ replace with a T/R
         r3 = random.randint(0,9)
         return f"{r1}{r2}{r3}"
+
+    def format_actype(self, aircraft_description:str):
+        #Pull RECAT database
+        json_file = open('./data/acft_database.json')
+        recat_db = json.load(json_file)
+        json_file.close()
+        
+        #Format that shi & send it back
+        aircraft_description = aircraft_description.replace("H/","")
+        aircraft_description = aircraft_description.replace("J/","")
+        # aircraft_type = aircraft_description
+        # string_split = aircraft_description
+        index_of_equipment_slash = aircraft_description.find("/")
+        if index_of_equipment_slash == -1:
+          aircaft_type = aircraft_description
+          equipment_suffix = ""
+        else:
+            aircaft_type = aircraft_description[:index_of_equipment_slash]
+            equipment_suffix = aircraft_description[index_of_equipment_slash:]
+        
+        typecode = f'{recat_db["aircraft"][aircaft_type]["recat"]}/{aircaft_type}{equipment_suffix}'
+        return typecode
