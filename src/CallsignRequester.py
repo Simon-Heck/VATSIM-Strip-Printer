@@ -5,7 +5,7 @@ import time
 __author__ = "Simon Heck"
 
 class CallsignRequester:
-    control_area = "A80ALL"
+    control_area = "A80ALL" # Set A80ALL as the control area in case theres some failure, lol.
     def __init__(self, printer: Printer, data_collector: DataCollector, control_area) -> None:
         self.printer = printer
         self.data_collector = data_collector

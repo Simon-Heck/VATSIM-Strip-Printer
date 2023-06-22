@@ -6,6 +6,7 @@ from JSONRefreshTimer import JSONRefreshTimer
 from CallsignRequester import CallsignRequester
 from ClearStoredCallsigns import ClearStoredCallsigns
 import pickle
+
 __author__ = "Simon Heck"
 
 class Main():
@@ -46,7 +47,7 @@ class Main():
             try:
                 control_area = printerpositions[position]
             except:
-                print("I'm sorry, I don't understand. Setting your position to ATL Clearance Delivery (default).")
+                print("I'm sorry, I don't understand. Setting your position to ATL Clearance Delivery (default position).")
                 control_area = "KATL"
             try:
                 response = input("Do you want to print all departures on the ground? Reply with a '1' for yes, '0' for no: ")
@@ -56,7 +57,7 @@ class Main():
                     print_all_departures = bool(int(response))
                     
                 if(print_all_departures):
-                    response = input(f" Do you want to clear the {len(current_callsigns_cached)} cached strips? Reply '1' for yes, '0' for no: ")
+                    response = input(f"Do you want to clear the {len(current_callsigns_cached)} cached strips? Reply '1' for yes, '0' for no: ")
                     current_callsigns_cached = []
                     clear_cache = bool(int(response))
                     if(clear_cache):
@@ -86,6 +87,9 @@ class Main():
         # Thread3: automatically prints new flight strips when callsign list updated
         automated_strip_printing = threading.Thread(target=data_collector.scan_for_new_aircraft_automatic)
         
+        # Sync pulling of data BEFORE starting threads
+        json_refresh.calculateDelay(json_url)
+
         # start all threads
         JSON_timer.start()
         automated_strip_printing.start()
