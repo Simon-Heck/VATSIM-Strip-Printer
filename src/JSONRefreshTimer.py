@@ -43,6 +43,9 @@ class JSONRefreshTimer:
             timeToWait = timeToWait - 15
 
         timeToWait = timeToWait + 1 # Add 1 second as a buffer incase of drift or whatever
+        if timeToWait == 16:
+            timeToWait = 0 #Literally means it doesn't need to refresh lol
+            print("Jackpot!")
         print("Estimated wait time is " + str(timeToWait)+ " seconds.")
         time.sleep(timeToWait)
         print("Delay implemeted and data synced. Unlocking program. Happy stripping!")

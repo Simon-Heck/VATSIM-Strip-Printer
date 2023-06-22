@@ -47,8 +47,9 @@ class Main():
             try:
                 control_area = printerpositions[position]
             except:
-                print("I'm sorry, I don't understand. Setting your position to ATL Clearance Delivery (default position).")
-                control_area = "KATL"
+                printerpositiondefault = tuple((printerpositions.items()))
+                print("I'm sorry, I can't seem to find " + position + ". Setting your position to " + str(printerpositiondefault[0][0]) + ", the default position.")
+                control_area = printerpositions[printerpositiondefault[0][0]]
             try:
                 response = input("Do you want to print all departures on the ground? Reply with a '1' for yes, '0' for no: ")
                 print_all_departures = bool(int(response))
