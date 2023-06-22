@@ -1,9 +1,9 @@
 Version: Python 3.11.3
 # Overview:
   * WIP flight progress strips for ZTL.
-  * Code Author: Simon Heck (Simon-Heck)
-  * Printer Technician: Joey Costello(JoeyTheDev1)
-  * Technical Advisor: Zackaria B.
+  * Code Author: Simon Heck [(Simon-Heck)](https://github.com/Simon-Heck)
+  * Printer Technician: Joey Costello [(JoeyTheDev1)](https://github.com/JoeyTheDev1/)
+  * Technical Advisor: Zack B)
 
 # TODO:
   * Add more comments and documentation
@@ -18,7 +18,7 @@ Version: Python 3.11.3
   * Barcode with pilot VATSIM CID on ATL strips(for strip scanning)
   * Truncates route to first 3 waypoints
   * Prints only remarks after RMK/
-  * Multi-threaded to simultaneously listen for user input, update JSOn data, and scan for new departures
+  * Multi-threaded to simultaneously listen for user input, update JSON data, and scan for new departures
   * Others
 
 
@@ -26,6 +26,7 @@ Version: Python 3.11.3
   * [ZebraZD410 Printer](https://www.zebra.com/us/en/products/spec-sheets/printers/desktop/zd410.html)
   * [1x8 Flight Strips](https://bocathermal.txdesign.com/thermal-general-admission-ticket/details/boca-flight-strip-1-x-8/)
   * Computer with [python](https://www.python.org/downloads/) 3.1 or greater
+
 # How to Run:
   * Aquire the following modules:
     
