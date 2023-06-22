@@ -1,18 +1,18 @@
 import threading
-import argparse
 from DataCollector import DataCollector
 from Printer import Printer
 from JSONRefreshTimer import JSONRefreshTimer
 from CallsignRequester import CallsignRequester
 from ClearStoredCallsigns import ClearStoredCallsigns
 import pickle
+
 __author__ = "Simon Heck"
 
 class Main():
     def __init__(self) -> None:
         
         json_url = "https://data.vatsim.net/v3/vatsim-data.json"
-        cached_callsign_path = "./cached_departures_that_have_been_printed"
+        cached_callsign_path = "./data/cached_departures_that_have_been_printed"
         # Full path used for debugging
         # cached_callsign_path = "C:\\Users\\simon\\OneDrive\\Documents\\Coding Projects\\strip-data-collector\\src\\cached_departures_that_have_been_printed"
         printerpositions = {
@@ -46,8 +46,9 @@ class Main():
             try:
                 control_area = printerpositions[position]
             except:
-                print("I'm sorry, I don't understand. Setting your position to ATL Clearance Delivery(Default).")
-                control_area = "KATL"
+                printerpositiondefault = tuple((printerpositions.items()))
+                print("I'm sorry, I can't seem to find " + position + ". Setting your position to " + str(printerpositiondefault[0][0]) + ", the default position.")
+                control_area = printerpositions[printerpositiondefault[0][0]]
             try:
                 response = input("Do you want to print all departures on the ground? Reply with a '1' for yes, '0' for no: ")
                 print_all_departures = bool(int(response))
@@ -67,13 +68,13 @@ class Main():
             except ValueError:
                 print("Please input either a 1 or 0....IDIOT")
 
-        # # load callsigns so that they are not printed
+        # load callsigns so that they are not printed
         # if not print_cached_departures:
         printed_callsigns = current_callsigns_cached
         
         printer = Printer() 
         data_collector = DataCollector(json_url, control_area, printer, printed_callsigns, cached_callsign_path)
-        callsign_requester = CallsignRequester(printer, data_collector)
+        callsign_requester = CallsignRequester(printer, data_collector, control_area)
         json_refresh = JSONRefreshTimer(data_collector)
 
         # initial data grab
@@ -86,14 +87,13 @@ class Main():
         # Thread3: automatically prints new flight strips when callsign list updated
         automated_strip_printing = threading.Thread(target=data_collector.scan_for_new_aircraft_automatic)
         
+        # Sync pulling of data BEFORE starting threads
+        json_refresh.calculateDelay(json_url)
+
         # start all threads
         JSON_timer.start()
         automated_strip_printing.start()
         user_input.start()
 
-## TODO
-# GUI
-# easier changing of airport Lat-Long Points
-# add more graceful thread closure
 if __name__ == "__main__":
    main = Main()
