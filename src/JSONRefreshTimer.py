@@ -3,10 +3,6 @@ import time
 import requests
 import re
 
-##this shit needs to be cleaned up!!!!! its no modular!!!!
-##i think that the syncing should happen on main.py and then start this thread.
-
-
 __author__ = "Simon Heck"
 
 class JSONRefreshTimer:
