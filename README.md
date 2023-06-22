@@ -5,7 +5,7 @@ Version: Python 3.11.3
   * Printer Technician: Joey Costello [(JoeyTheDev1)](https://github.com/JoeyTheDev1/)
   * Technical Advisor: Zack B)
 
-# TODO:
+# To do:
   * Add more comments and documentation
   * Make starting text prompts easier to understand
   * Print Sigmets
