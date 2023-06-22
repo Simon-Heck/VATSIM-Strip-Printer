@@ -1,5 +1,4 @@
 import threading
-import argparse
 from DataCollector import DataCollector
 from Printer import Printer
 from JSONRefreshTimer import JSONRefreshTimer
@@ -69,7 +68,7 @@ class Main():
             except ValueError:
                 print("Please input either a 1 or 0....IDIOT")
 
-        # # load callsigns so that they are not printed
+        # load callsigns so that they are not printed
         # if not print_cached_departures:
         printed_callsigns = current_callsigns_cached
         
@@ -96,9 +95,5 @@ class Main():
         automated_strip_printing.start()
         user_input.start()
 
-## TODO
-# GUI
-# easier changing of airport Lat-Long Points
-# add more graceful thread closure
 if __name__ == "__main__":
    main = Main()

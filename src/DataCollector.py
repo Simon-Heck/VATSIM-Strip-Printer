@@ -315,27 +315,6 @@ class DataCollector:
                 pass        
             except Exception as e2:
                 print(e2)  
-        # ------Legacy code----------
-        # connected_pilots = self.json_file['pilots']
-        # # Interpreting/Filtering JSON Data
-        # for i in range(len(connected_pilots)):
-        #     # pilot at index i information
-        #     current_pilot = connected_pilots[i]
-        #     try:
-        #         pilot_departure_airport = current_pilot['flight_plan']['departure']
-        #         lat_long_tuple = (current_pilot['latitude'], current_pilot['longitude'])
-        #         pilot_callsign = current_pilot['callsign'].upper()
-        #         if pilot_departure_airport == self.departure_airport and self.in_geographical_region(self.departure_airport, lat_long_tuple):
-        #             # Save callsign of pilot and associated JSON Info
-        #             # to access, use: self.callsign_list.get(**callsign**)
-        #             # that will return the portion of the JSON with all of the pilot's info from when the system added them(flightplan, CID, etc.)
-        #             self.add_callsign_to_dep_list(pilot_callsign, current_pilot)
-        #         elif (pilot_departure_airport == self.departure_airport) and (not self.in_geographical_region(self.departure_airport, lat_long_tuple)) and (pilot_callsign in self.callsign_list):
-        #             self.remove_callsign_from_lists(pilot_callsign)
-        #     except TypeError as e1:
-        #         pass        
-        #     except Exception as e2:
-        #         print(e2)  
 
     def remove_callsign_from_lists(self, callsign_to_remove):
         self.callsign_list.pop(callsign_to_remove)

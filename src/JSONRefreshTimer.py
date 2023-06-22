@@ -19,8 +19,6 @@ class JSONRefreshTimer:
         start_time = (requests.get(json_url).json())["general"]["update_timestamp"]
         jsonSeconds = re.findall(":..", start_time) #find seconds
         jsonSeconds = int(re.sub(":","",jsonSeconds[1])) #clean up seconds so we can make it an integer
-        #print(start_time) # For debugging / Testing purposes... gotta know what we're starting with
-        #print(time.ctime()) # Know where we're at to see if the delay is... right
 
         #Calculate when the next refresh SHOULD happen
         timeToWait = 0
