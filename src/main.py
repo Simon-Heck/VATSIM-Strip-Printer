@@ -77,7 +77,7 @@ class Main():
         data_collector = DataCollector(json_url, control_area, printer, printed_callsigns, cached_callsign_path)
         callsign_requester = CallsignRequester(printer, data_collector, control_area)
         json_refresh = JSONRefreshTimer(data_collector)
-        wx_refresh = WXRadio()
+        wx_refresh = WXRadio(control_area)
 
         # initial data grab
         data_collector.check_for_updates()
@@ -105,9 +105,9 @@ class Main():
 
 
         # start other threads
-        wxradio.start()
         JSON_timer.start()
         user_input.start()
+        wxradio.start()
 
 
 if __name__ == "__main__":

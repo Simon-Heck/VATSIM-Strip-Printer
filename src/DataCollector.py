@@ -4,17 +4,10 @@ import time
 import pickle
 __author__ = "Simon Heck"
 
-class DataCollector:
 
-    def __init__(self, json_url:str, control_area:str, printer:Printer, cached_printed_departures:list, cached_departures_file_path:str) -> None:
-        self.callsign_list = {}
-        self.json_url = json_url
-        self.control_area = control_area
-        self.printer = printer
-        self.printed_callsigns = cached_printed_departures
-        self.cached_departures_file_path = cached_departures_file_path
-        # TODO Load from saved JSON File
-        self.control_area_dict = {"A80SAT" : {"KPDK" : ((33.88584377733848, -84.31037981332257),(33.86777939460844, -84.29467279840003)),
+
+
+control_areas = {"A80SAT" : {"KPDK" : ((33.88584377733848, -84.31037981332257),(33.86777939460844, -84.29467279840003)),
                             "KAHN" : ((33.9540766285094, -83.34223955210349),(33.940868873503796, -83.31558912314766)),
                             "KFTY" : ((33.78279814861325, -84.53293817967267),(33.76835092467223, -84.5060731738479)),
                             "KRYY" : ((34.01806592382934, -84.60951066352965),(34.00856797197957, -84.58389020270525)),
@@ -179,6 +172,21 @@ class DataCollector:
                 "KTRI" : {"KTRI" :((36.48772000522447, -82.42556968501692),(36.46038860112367, -82.39218154680279))},
                 "KTYS" : {"KTYS" :((35.824848376007616, -84.01527157210842),(35.79672807375963, -83.97553196286273))}
                 }
+
+
+
+
+
+class DataCollector:
+    def __init__(self, json_url:str, control_area:str, printer:Printer, cached_printed_departures:list, cached_departures_file_path:str) -> None:
+        self.callsign_list = {}
+        self.json_url = json_url
+        self.control_area = control_area
+        self.printer = printer
+        self.printed_callsigns = cached_printed_departures
+        self.cached_departures_file_path = cached_departures_file_path
+        # TODO Load from saved JSON File
+        self.control_area_dict = control_areas
 
     def check_for_updates(self):
         self.update_json(self.json_url)

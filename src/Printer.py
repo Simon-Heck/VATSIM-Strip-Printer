@@ -55,6 +55,15 @@ class Printer:
         else:
             print(f"Could not find {requested_callsign} in {control_area} proposals. Nice going, dumbass.")
 
+    def print_gi_messages(message):
+        zebra = Zebra()
+        Q = zebra.getqueues()
+        zebra.setqueue(Q[0])
+        time.sleep(3)
+        # print(f"GI {message}")
+        zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FS^FB1590,4,3,L,25^FO0,10^FDGI G1{message}^A0b,40,40^XZ")
+
+
     def remove_amendment_marking(self, route:str) -> str:
         route = route.replace("+", "")
         return route
