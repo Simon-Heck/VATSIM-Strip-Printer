@@ -12,34 +12,37 @@ sigmet_list = []
 cwa_list = []  
 airports = {
     "KATL":(33.63734349729365, -84.42911583827573),
-    "KODX":(41.71323176607031, -98.96874170513782)
+    "KODX":(41.71323176607031, -98.96874170513782),
+    "KTKE":(41.765013127151114, -96.17884464621223),
+    "KAFK":(40.60583096912623, -95.86428467726931),
+    "KMRS":(41.4303195521458, -88.42153437224778)
     }
 
 ### Yes, this has shit hard coded in. I don't feel like figuring out how to set up location search... yet.
 
 class WXRadio:
-    def start_refreshing(delay:int = 10):
+    def __init__(self) -> None:
+        pass
+
+    def start_refreshing(self,delay:int = 300):
         while(True):
-            WXRadio.fetch_sigmet(sigmetJSON)
-            #WXRadio.fetch_cwas(cwasJSON)
+            self.fetch_sigmet(sigmetJSON)
+            self.fetch_cwas(cwasJSON)
             time.sleep(delay)
             
 
-    def fetch_sigmet(api):
-        print("Playing fetch with the National Weather Service, in Peachtree City, GA.")
-        print("Fetching SIGMETs for Atlanta GA, please wait!")
+    def fetch_sigmet(self, api):
         r = requests.get(api)
         raw = r.json()
         # print(raw)
         for i in raw:
             isEligible = False
             #calculate if its reportable
-            #print("NEW SIGMET")
             for u in i["coords"]:
                 if i["airSigmetId"] not in sigmet_list: 
-                    airport_lat, airport_lon = airports["KATL"]
+                    airport_lat, airport_lon = airports["KMRS"]
                     sigmetlat, sigmetlon = u["lat"],u["lon"]
-                    if ((sigmetlat - 1 < airport_lat < sigmetlat + 1) or (sigmetlon - 1 < airport_lon < sigmetlon + 1)):
+                    if ((sigmetlat - .8333 < airport_lat < sigmetlat + .8333) and (sigmetlon - .8333 < airport_lon < sigmetlon + .8333)):
                         isEligible = True
             if isEligible:
                 hazard = i["hazard"]
@@ -47,14 +50,11 @@ class WXRadio:
                 rawsigmet = i["rawAirSigmet"].splitlines()
                 sigmet_list.append(i["airSigmetId"])
                 if type == "SIGMET":
-                    print(f'{rawsigmet[2]} {rawsigmet[3]}... {rawsigmet[4]}... {rawsigmet[6]}{rawsigmet[7]}')
+                    print(f'GI G1 {rawsigmet[2]} {rawsigmet[3]}... {rawsigmet[4]}... {rawsigmet[6]}{rawsigmet[7]} ...ZTLFD')
                 elif type == "AIRMET":
-                    print(f'{rawsigmet[2]} {rawsigmet[3]} ')#{rawsigmet[6]}')
-
-
+                    print(f'GI G1 {rawsigmet[2]} {rawsigmet[3]} {rawsigmet[6]} ...ZTLFD')
     
-    def fetch_cwas(api):
-        print("Playing fetch with the Center Weather Service Unit of ZTL.")
+    def fetch_cwas(self, api):
         r = requests.get(api)
         raw = r.json()
         # print(raw)
@@ -65,8 +65,5 @@ class WXRadio:
                 #print(["cwsu"])
                 cwsu = advzy['cwsu']
                 hazard = advzy["text"]
-                print(f'This is {cwsu} center weather advisory {id} for {hazard}.')
+                print(f'GI G1 {cwsu} CWA {id} for {hazard}.')
                 cwa_list.append(id)
-
-
-WXRadio.start_refreshing()

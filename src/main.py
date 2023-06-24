@@ -5,6 +5,7 @@ from JSONRefreshTimer import JSONRefreshTimer
 from CallsignRequester import CallsignRequester
 from ClearStoredCallsigns import ClearStoredCallsigns
 import pickle
+from HazardousWX import WXRadio
 
 __author__ = "Simon Heck"
 
@@ -76,6 +77,7 @@ class Main():
         data_collector = DataCollector(json_url, control_area, printer, printed_callsigns, cached_callsign_path)
         callsign_requester = CallsignRequester(printer, data_collector, control_area)
         json_refresh = JSONRefreshTimer(data_collector)
+        wx_refresh = WXRadio()
 
         # initial data grab
         data_collector.check_for_updates()
@@ -86,7 +88,13 @@ class Main():
         JSON_timer = threading.Thread(target=json_refresh.start_refreshing)
         # Thread3: automatically prints new flight strips when callsign list updated
         automated_strip_printing = threading.Thread(target=data_collector.scan_for_new_aircraft_automatic)
-        
+        # Thread4: automatically print SIGMETs/AIRMETs every once in a while.
+        wxradio = threading.Thread(target=wx_refresh.start_refreshing)
+
+
+        #start printing strips while customer decides whether or not they want to sync the data.
+        automated_strip_printing.start()
+
         # Sync pulling of data BEFORE starting threads
         print("Would you like to sync data collection with the network?")
         try:
@@ -96,10 +104,11 @@ class Main():
             print("Sorry, I'm not sure I understand. Skipping data sync.")
 
 
-        # start all threads
+        # start other threads
+        wxradio.start()
         JSON_timer.start()
-        automated_strip_printing.start()
         user_input.start()
+
 
 if __name__ == "__main__":
    main = Main()
