@@ -88,7 +88,13 @@ class Main():
         automated_strip_printing = threading.Thread(target=data_collector.scan_for_new_aircraft_automatic)
         
         # Sync pulling of data BEFORE starting threads
-        json_refresh.calculateDelay(json_url)
+        print("Would you like to sync data collection with the network?")
+        try:
+            if bool(int(input('Reply "1" for yes, and "0" for no:'))):
+                json_refresh.calculateDelay(json_url)
+        except:
+            print("Sorry, I'm not sure I understand. Skipping data sync.")
+
 
         # start all threads
         JSON_timer.start()
