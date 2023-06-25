@@ -12,9 +12,12 @@ class Main():
     def __init__(self) -> None:
         
         json_url = "https://data.vatsim.net/v3/vatsim-data.json"
+        
+        acft_json = "./data/acft_database.json"
         cached_callsign_path = "./data/cached_departures_that_have_been_printed"
         # Full path used for debugging
-        # cached_callsign_path = "C:\\Users\\simon\\OneDrive\\Documents\\Coding Projects\\strip-data-collector\\src\\cached_departures_that_have_been_printed"
+        # acft_json = "./strip-data-collector\\src\\data\\acft_database.json"
+        # cached_callsign_path = "./strip-data-collector\\src\\cached_departures_that_have_been_printed"
         printerpositions = {
             "ATL-CD" : "KATL",
             "A80-ALL" : "A80ALL",
@@ -72,7 +75,7 @@ class Main():
         # if not print_cached_departures:
         printed_callsigns = current_callsigns_cached
         
-        printer = Printer() 
+        printer = Printer(acft_json) 
         data_collector = DataCollector(json_url, control_area, printer, printed_callsigns, cached_callsign_path)
         callsign_requester = CallsignRequester(printer, data_collector, control_area)
         json_refresh = JSONRefreshTimer(data_collector)

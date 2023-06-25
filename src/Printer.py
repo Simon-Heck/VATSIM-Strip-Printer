@@ -7,7 +7,11 @@ import json
 __author__ = "Simon Heck"
 
 class Printer:
-    def __init__(self) -> None:
+    def __init__(self, acrft_json_path) -> None:
+        #Pull RECAT database
+        json_file = open(acrft_json_path)
+        self.recat_db = json.load(json_file)
+        json_file.close()
         pass
 
     def input_callsign():
@@ -22,7 +26,7 @@ class Printer:
         if requested_callsign == "" or None:
             # print("blank")
             # print blank strip
-            zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB140,1,0,L^FO5,1470^FD^A0b,40,40^FS^FB200,1,0,L^FO60,1400^FD^A0b,40,40^FS^FO130,1530^FD^A0b,40,40^FS^FO130,1320^BCB,40,N,N,N,A^FD^FS^FB200,1,0,R^FO45,1320^FD^A0b,80,80^FS^FO5,1200^FD^A0b,40,40^FS^FO80,1190^FD^A0b,40,40^FS^FO145,1220^FD^A0b,40,40^FS^FO5,1050^FD^A0b,40,40^FS^FB500,1,0,L^FO5,450^FD^A0b,40,40^FS^FB500,1,0,L^FO70,450^FD^A0b,40,40^FS^^FB500,1,0,L^FO135,450^FD^A0b,40,40^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
+            zebra.output(f"^XA^CWK,E:FLIGHTPROGRESSSTRIP.TTF^XZ^XA^AKN,50,70^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB140,1,0,L^FO5,1470^FD^AKb,35,35^FS^FB200,1,0,L^FO60,1400^FD^AKb,35,35^FS^FO130,1530^FD^FS^FB200,1,0,R^FO45,1320^FD^AKb,80,80^FS^FO5,1200^FD^AKb,35,35^FS^FO80,1190^FD^AKb,35,35^FS^FO145,1220^FD^AKb,35,35^FS^FO5,1050^FD^AKb,35,35^FS^FB500,1,0,L^FO5,450^FD^AKb,35,35^FS^FB500,1,0,L^FO70,450^FD^AKb,35,35^FS^^FB500,1,0,L^FO135,450^FD^AKb,35,35^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
 
         elif callsign_data is not None:
             callsign = callsign_data['callsign']
@@ -37,10 +41,11 @@ class Printer:
             remarks=callsign_data['flight_plan']['remarks']
             remarks = self.format_remarks(callsign_data['flight_plan']['remarks'])
             enroute_time = callsign_data['flight_plan']['enroute_time']
-            cid = callsign_data['cid']
+            cid = f"^FO110,1340^BCB,70,N,N,N,A^FD{callsign_data['cid']}" #Format barcode here...
+            # cid = callsign_data['cid']
             if control_area != "KATL": #purge barcode if not ATL clearance
                 cid = ""
-            exit_fix = self.match_ATL_exit_fix(flightplan)
+            exit_fix = self.match_ATL_exit_fix(callsign_data['flight_plan']['route'])
             computer_id = self.generate_id(callsign_data['flight_plan']['remarks'])
             amendment_number = str(int(callsign_data['flight_plan']['revision_id'])-1)
             if amendment_number == '0':
@@ -48,17 +53,19 @@ class Printer:
 
             #print flight strip on printer
             # Delayto allow proper spacing and formating on successive flight strips
-            time.sleep(3)
+           
             # print(f"{callsign}, {departure_airport}, {ac_type}, {departure_time}, {cruise_alt}, {flightplan}, {assigned_sq}, {destination}, {enroute_time}, {cid}, {exit_fix}, {computer_id}, {amendment_number}, {remarks}")
-            zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB250,1,0,L^FO5,1350^FD{callsign}^A0b,40,40^FS^FB200,1,0,L^FO70,1400^FD{ac_type}^A0b,40,40^FS^FO130,1540^FD{computer_id}^A0b,40,40^FS^FO130,1320^BCB,40,N,N,N,A^FD{cid}^FS^FB200,1,0,R^FO45,1320^FD{exit_fix}^A0b,80,80^FS^FO5,1200^FD{assigned_sq}^A0b,40,40^FS^FO80,1190^FD{departure_time}^A0b,40,40^FS^FO145,1220^FD{cruise_alt}^A0b,40,40^FS^FO5,1050^FD{departure_airport}^A0b,40,40^FS^FB500,1,0,L^FO5,450^FD{flightplan}^A0b,40,40^FS^FB500,1,0,L^FO70,450^FD{destination}^A0b,40,40^FS^^FB500,1,0,L^FO135,450^FD{remarks}^A0b,40,40^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
-            
+            # zebra.output(f"^XA^CWK,E:FLIGHTPROGRESSSTRIP.TTF^XZ^XA^AKN,50,70^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB250,1,0,L^FO5,1350^FD{callsign}^AKb,35,35^FS^FB200,1,0,L^FO70,1400^FD{ac_type}^AKb,35,35^FS^FO130,1540^FD{computer_id}^AKb,35,35^FS^FO130,1320^BCB,40,N,N,N,A^FD{cid}^FS^FB200,1,0,R^AKb,45,45^FO45,1320^FD{exit_fix}^AKb,80,80^FS^FO5,1200^FD{assigned_sq}^AKb,35,35^FS^FO80,1190^FD{departure_time}^AKb,35,35^FS^FO145,1220^FD{cruise_alt}^AKb,35,35^FS^FO5,1050^FD{departure_airport}^AKb,35,35^FS^FB500,1,0,L^FO5,450^FD{flightplan}^AKb,35,35^FS^FB500,1,0,L^FO70,450^FD{destination}^AKb,35,35^FS^^FB500,1,0,L^FO135,450^FD{remarks}^AKb,35,35^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
+            zebra.output(f"^XA^CWK,E:FLIGHTPROGRESSSTRIP.TTF^XZ^XA^AKN,50,70^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB250,1,0,L^FO5,1350^FD{callsign}^AKb,35,35^FS^FB200,1,0,L^FO70,1400^FD{ac_type}^AKb,35,35^FS^FO130,1540^FD{computer_id}^AKb,35,35^FS{cid}^FS^FB200,1,0,R^AKb,45,45^FO35,1300^FD{exit_fix}^AKb,80,80^FS^FO5,1200^FD{assigned_sq}^AKb,35,35^FS^FO80,1190^FD{departure_time}^AKb,35,35^FS^FO145,1220^FD{cruise_alt}^AKb,35,35^FS^FO5,1050^FD{departure_airport}^AKb,35,35^FS^FB550,1,0,L^FO5,400^FD{flightplan}^AKb,35,35^FS^FB500,1,0,L^FO70,450^FD{destination}^AKb,35,35^FS^^FB500,1,0,L^FO135,450^FD{remarks}^AKb,35,35^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
+
+            # time.sleep(3)
         else:
             print(f"Could not find {requested_callsign} in {control_area} proposals. Nice going, dumbass.")
 
     def remove_amendment_marking(self, route:str) -> str:
         route = route.replace("+", "")
         return route
-    
+    # TODO Get rid of N0454F360 Shit
     def format_remarks(self, remark_string:str):
         # remove voice type
         if "/V/" in remark_string:
@@ -123,13 +130,13 @@ class Printer:
         for i in range(len(flightplan_list)):
             if i >= 3 and is_route_amended:
                 build_string = build_string.strip()
-                return  f"+{build_string}+"
+                return  f"+{departure} {build_string}+"
             elif i >= 3:
                 build_string = build_string.strip()
-                return f"{build_string}. / ."
+                return f"{departure} {build_string}./."
             
             build_string = f"{build_string}{flightplan_list[i]} "
-
+        build_string = f'{departure} {build_string}'
         if is_route_amended:
             build_string = build_string.strip()
             return f"+{build_string}+"
@@ -208,10 +215,6 @@ class Printer:
         return f"{r1}{r2}{r3}"
 
     def format_actype(self, aircraft_description:str):
-        #Pull RECAT database
-        json_file = open('./data/acft_database.json')
-        recat_db = json.load(json_file)
-        json_file.close()
         
         #Format that stuff & send it back
         aircraft_description = aircraft_description.replace("H/","")
@@ -223,6 +226,7 @@ class Printer:
         else:
             aircaft_type = aircraft_description[:index_of_equipment_slash]
             equipment_suffix = aircraft_description[index_of_equipment_slash:]
-        
-        typecode = f'{recat_db["aircraft"][aircaft_type]["recat"]}/{aircaft_type}{equipment_suffix}'
-        return typecode
+        try:
+            return f'{self.recat_db["aircraft"][aircaft_type]["recat"]}/{aircaft_type}{equipment_suffix}'
+        except:
+            return aircraft_description
