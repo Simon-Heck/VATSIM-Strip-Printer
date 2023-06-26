@@ -5,6 +5,7 @@ from JSONRefreshTimer import JSONRefreshTimer
 from CallsignRequester import CallsignRequester
 from ClearStoredCallsigns import ClearStoredCallsigns
 import pickle
+import json
 from HazardousWX import WXRadio
 
 __author__ = "Simon Heck"
@@ -16,12 +17,7 @@ class Main():
         cached_callsign_path = "./data/cached_departures_that_have_been_printed"
         # Full path used for debugging
         # cached_callsign_path = "C:\\Users\\simon\\OneDrive\\Documents\\Coding Projects\\strip-data-collector\\src\\cached_departures_that_have_been_printed"
-        printerpositions = {
-            "ATL-CD" : "KATL",
-            "A80-ALL" : "A80ALL",
-            "A80-SAT" : "A80SAT",
-            "ZTL" : "ZTL"
-        }
+        printerpositions = "./data/positions.json"
         # departure_airport = "KATL"
         control_area = ""        
         printed_callsigns = []
@@ -38,18 +34,34 @@ class Main():
 
         print_all_departures = False
         while(True):
+            #Load facility choices from positions.json
+            print("Please select your control facility. Your choices are:")
+            facilities = (json.load(open(printerpositions)))["facilities"]
+            for i in facilities:
+                print(i)
+            facility = input()
+            facility = str(facility.upper())
+            try:
+                facility = facilities[facility]
+            except:
+                printerfacilitydefault = tuple((facilities.items()))
+                print("I'm sorry, I can't seem to find " + facility + ". Setting your facility to " + str(printerfacilitydefault[0][0]) + ", the default facility.")
+                facility = facilities[printerfacilitydefault[0][0]]
+
+            #Load position choices.
+            control_area = tuple((facility.items()))[0] #If this isn't here... it causes the datacollector to silently error ?
             print("Please select your control position.")
             print("Your choices include:")
-            for i in printerpositions:
+            for i in facility:
                 print(i)
-            response = input()
-            position = str(response.upper())
+            position = input()
+            position = position.upper()
             try:
-                control_area = printerpositions[position]
+                control_area = facility[position]
             except:
-                printerpositiondefault = tuple((printerpositions.items()))
+                printerpositiondefault = tuple((facility.items()))
                 print("I'm sorry, I can't seem to find " + position + ". Setting your position to " + str(printerpositiondefault[0][0]) + ", the default position.")
-                control_area = printerpositions[printerpositiondefault[0][0]]
+                control_area = facility[printerpositiondefault[0][0]]
             try:
                 response = input("Do you want to print all departures on the ground? Reply with a '1' for yes, '0' for no: ")
                 print_all_departures = bool(int(response))
@@ -92,13 +104,17 @@ class Main():
         wxradio = threading.Thread(target=wx_refresh.start_refreshing)
 
 
+        print("Would you like Hazardous Weather Advisories?")
+        enablewxradio = bool(int(input('Reply "1" for yes, and "0" for no: ')))
+
+
         #start printing strips while customer decides whether or not they want to sync the data.
         automated_strip_printing.start()
 
         # Sync pulling of data BEFORE starting threads
         print("Would you like to sync data collection with the network?")
         try:
-            if bool(int(input('Reply "1" for yes, and "0" for no:'))):
+            if bool(int(input('Reply "1" for yes, and "0" for no: '))):
                 json_refresh.calculateDelay(json_url)
         except:
             print("Sorry, I'm not sure I understand. Skipping data sync.")
@@ -107,7 +123,8 @@ class Main():
         # start other threads
         JSON_timer.start()
         user_input.start()
-        wxradio.start()
+        if enablewxradio:
+            wxradio.start()
 
 
 if __name__ == "__main__":

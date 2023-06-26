@@ -10,10 +10,7 @@ __author__ = "Simon Heck"
 
 sigmet_list = [] 
 cwa_list = []  
-airports = {
-    "KATL":(33.63734349729365, -84.42911583827573),
-    "KCLT":(35.21639549048071, -80.9539045878016),
-    }
+airports = open("./data/airports.json")
 
 sigmetJSON = "https://beta.aviationweather.gov/cgi-bin/data/airsigmet.php?format=json"
 cwasJSON = "https://api.weather.gov/aviation/cwsus/ZTL/cwas"
@@ -25,7 +22,7 @@ airportsPath = airports
 
 class WXRadio:
     def __init__(self, control_area) -> None:
-        self.control_area = control_area
+        self.control_area = control_area["airports"]
         pass
 
     def start_refreshing(self, delay:int = 300):
@@ -44,7 +41,7 @@ class WXRadio:
             #calculate if its reportable
             for u in i["coords"]:
                 if i["airSigmetId"] not in sigmet_list:
-                    for fieldlist in jurisdictionPath[control_area]:
+                    for fieldlist in control_area:
                         try:
                             airport_lat, airport_lon = airportsPath[fieldlist]
                             sigmetlat, sigmetlon = u["lat"],u["lon"]
@@ -62,7 +59,8 @@ class WXRadio:
                     Printer.print_gi_messages(f'G1 {rawsigmet[2]} {rawsigmet[3]}... {rawsigmet[4]}... {rawsigmet[6]}{rawsigmet[7]} ...ZTLFD')
                 elif type == "AIRMET":
                 #    print(f'GI G1 {rawsigmet[2]} {rawsigmet[3]} {rawsigmet[6]} ...ZTLFD')
-                    Printer.print_gi_messages(f'G1 {rawsigmet[2]} {rawsigmet[3]} {rawsigmet[6]} ...ZTLFD')
+                    gi_message = (f'G1 {rawsigmet[2]} {rawsigmet[3]} {rawsigmet[6]} ...ZTLFD')
+                    Printer.print_gi_messages(gi_message)
     
     def fetch_cwas(self, api, control_area):
         r = requests.get(api)
@@ -76,5 +74,6 @@ class WXRadio:
                 cwsu = advzy['cwsu']
                 hazard = advzy["text"]
                 # print(f'GI G1 {cwsu} CWA {id} for {hazard}.')
-                Printer.print_gi_messages(f'G1 {cwsu} CWA {id} for {hazard} ...ZTLFD')
+                gi_message = f'G1 {cwsu} CWA {id} for {hazard} ...ZTLFD'
+                Printer.print_gi_messages(gi_message)
                 cwa_list.append(id)
