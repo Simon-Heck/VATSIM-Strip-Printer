@@ -28,7 +28,7 @@ class Printer:
             # print blank strip
             zebra.output(f"^XA^CWK,E:FLIGHTPROGRESSSTRIP.TTF^XZ^XA^AKN,50,70^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB140,1,0,L^FO5,1470^FD^AKb,35,35^FS^FB200,1,0,L^FO60,1400^FD^AKb,35,35^FS^FO130,1530^FD^FS^FB200,1,0,R^FO45,1320^FD^AKb,80,80^FS^FO5,1200^FD^AKb,35,35^FS^FO80,1190^FD^AKb,35,35^FS^FO145,1220^FD^AKb,35,35^FS^FO5,1050^FD^AKb,35,35^FS^FB500,1,0,L^FO5,450^FD^AKb,35,35^FS^FB500,1,0,L^FO70,450^FD^AKb,35,35^FS^^FB500,1,0,L^FO135,450^FD^AKb,35,35^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
 
-        elif callsign_data is not None:
+        elif callsign_data is not None and (control_area['type'] == "CD" or control_area['type'] == "COMBINED"):
             callsign = callsign_data['callsign']
             departure_airport = callsign_data['flight_plan']['departure']
             ac_type = callsign_data['flight_plan']['aircraft_faa']
@@ -60,7 +60,19 @@ class Printer:
 
             # time.sleep(3)
         else:
-            print(f"Could not find {requested_callsign} in {control_area} proposals. Nice going, dumbass.")
+            if control_area['type'] != "CD" and control_area['type'] != "TAR":
+                return
+            airfields = str.replace(str.replace(str.replace(str(list.copy(control_area['airports'])),"'",""),"[",""),"]","")
+            print(f"Could not find {requested_callsign} in {airfields} proposals. Nice going, dumbass.")
+
+    def print_gi_messages(message):
+        zebra = Zebra()
+        Q = zebra.getqueues()
+        zebra.setqueue(Q[0])
+        time.sleep(3)
+        # print(f"GI {message}")
+        zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FS^FB1590,4,3,L,25^FO0,10^FDGI {message}^A0b,40,40^XZ")
+
 
     def remove_amendment_marking(self, route:str) -> str:
         route = route.replace("+", "")
