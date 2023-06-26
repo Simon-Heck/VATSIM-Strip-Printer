@@ -5,7 +5,7 @@ import requests
 from Printer import Printer
 from DataCollector import control_areas
 
-__author__ = "Simon Heck"
+__author__ = "Zackaria Bomenir"
 
 
 sigmet_list = [] 
