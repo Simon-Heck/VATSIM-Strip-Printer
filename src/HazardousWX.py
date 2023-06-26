@@ -57,10 +57,10 @@ class WXRadio:
                 sigmet_list.append(i["airSigmetId"])
                 if type == "SIGMET":
                 #    print(f'GI G1 {rawsigmet[2]} {rawsigmet[3]}... {rawsigmet[4]}... {rawsigmet[6]}{rawsigmet[7]} ...ZTLFD')
-                    Printer.print_gi_messages(f'G1 {rawsigmet[2]} {rawsigmet[3]}... {rawsigmet[4]}... {rawsigmet[6]}{rawsigmet[7]} ...ZTLFD')
+                    Printer.print_gi_messages(f'G1 {rawsigmet[2]} {rawsigmet[3]}... {rawsigmet[4]}... {rawsigmet[6]}{rawsigmet[7]} ...{(airportsPath[self.control_area["airports"][0]]["ARTCC"])}FD')
                 elif type == "AIRMET":
                 #    print(f'GI G1 {rawsigmet[2]} {rawsigmet[3]} {rawsigmet[6]} ...ZTLFD')
-                    gi_message = (f'G1 {rawsigmet[2]} {rawsigmet[3]} {rawsigmet[6]} ...ZTLFD')
+                    gi_message = (f'G1 {rawsigmet[2]} {rawsigmet[3]} {rawsigmet[6]} ...{(airportsPath[self.control_area["airports"][0]]["ARTCC"])}FD')
                     Printer.print_gi_messages(gi_message)
     
     def fetch_cwas(self, api, center):
