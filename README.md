@@ -5,10 +5,13 @@ Version: Python 3.11.3
   * Printer Technician: Joey Costello [(JoeyTheDev1)](https://github.com/JoeyTheDev1/)
   * Technical Advisor: Zack B)
 
+# In Progress:
+  * Print arrival strips
+  * Future proofing, I guess?
+
 # To do:
   * Add more comments and documentation
   * Make starting text prompts easier to understand
-  * Print Sigmets
   * Don't print VFR strips/Don't print amended VFR strips?
   * sync data refresh with VATSIM data refresh cycle
   * Clean up Code for new airports. Add new airports. Store in JSON?
@@ -19,6 +22,7 @@ Version: Python 3.11.3
   * Truncates route to first 3 waypoints
   * Prints only remarks after RMK/
   * Multi-threaded to simultaneously listen for user input, update JSON data, and scan for new departures
+  * Print Hazardous Weather Information
   * Others
 
 

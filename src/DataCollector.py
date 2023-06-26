@@ -77,16 +77,16 @@ class DataCollector:
             return self.callsign_list.get(callsign)
     
     def in_geographical_region_wip(self, control_area:str, departure:str, airplane_lat_long:tuple) -> bool:
-        fence = .026079
+        fence = {"CD":.026079,"TAR":1}
         airports_dict = airports
 
         #create fence
         #KATL NW Lat_Long point
-        northern_latitude = airports_dict.get(departure)["LAT"] + fence
-        western_longitude = airports_dict.get(departure)["LON"] - fence
+        northern_latitude = airports_dict.get(departure)["LAT"] + fence[control_area["type"]]
+        western_longitude = airports_dict.get(departure)["LON"] - fence[control_area["type"]]
         #KATL SE Lat_long point
-        southern_latitude = airports_dict.get(departure)["LAT"] - fence
-        eastern_longitude = airports_dict.get(departure)["LON"] + fence
+        southern_latitude = airports_dict.get(departure)["LAT"] - fence[control_area["type"]]
+        eastern_longitude = airports_dict.get(departure)["LON"] + fence[control_area["type"]]
 
         # airplane lat_long position
         airplane_lat, airplane_long = airplane_lat_long
@@ -96,15 +96,19 @@ class DataCollector:
         
     def scan_pilots(self):
         connected_pilots = self.json_file['pilots']
+        #What field should we check for? Departing or Arriving?
+        lookupdefinitions = {"CD":"departure","TAR":"arrival","DR":"departure","COMBINED":"departure"}
+        lookfor = lookupdefinitions[self.control_area['type']]
+
         # Interpreting/Filtering JSON Data
         for i in range(len(connected_pilots)):
             # pilot at index i information
             current_pilot = connected_pilots[i]
             try:
-                pilot_departure_airport = current_pilot['flight_plan']['departure']
+                pilot_departure_airport = current_pilot['flight_plan'][lookfor]
                 lat_long_tuple = (current_pilot['latitude'], current_pilot['longitude'])
                 pilot_callsign = current_pilot['callsign'].upper()
-                if pilot_departure_airport in tuple(self.control_area['airports']) and self.in_geographical_region_wip(self.control_area['airports'], pilot_departure_airport, lat_long_tuple):
+                if pilot_departure_airport in tuple(self.control_area['airports']) and self.in_geographical_region_wip(self.control_area, pilot_departure_airport, lat_long_tuple):
                     # Save callsign of pilot and associated JSON Info
                     # to access, use: self.callsign_list.get(**callsign**)
                     # that will return the portion of the JSON with all of the pilot's info from when the system added them(flightplan, CID, etc.)
