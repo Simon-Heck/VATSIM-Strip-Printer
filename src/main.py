@@ -35,6 +35,7 @@ class Main():
         print_all_departures = False
         while(True):
             #Load facility choices from positions.json
+            print("Initializing setup...")
             print("Please select your control facility. Your choices are:")
             facilities = (json.load(open(printerpositions)))["facilities"]
             for i in facilities:
@@ -50,17 +51,22 @@ class Main():
 
             #Load position choices.
             control_area = tuple((facility.items()))[0] #If this isn't here... it causes the datacollector to silently error ?
-            print("Please select your control position.")
-            print("Your choices include:")
-            for i in facility:
-                print(i)
-            position = input()
-            position = position.upper()
-            try:
-                control_area = facility[position]
-            except:
+            if len(facility) > 1:
+                print("Please select your control position.")
+                print("Your choices include:")
+                for i in facility:
+                    print(i)
+                position = input()
+                position = position.upper()
+                try:
+                    control_area = facility[position]
+                except:
+                    printerpositiondefault = tuple((facility.items()))
+                    print("I'm sorry, I can't seem to find " + position + ". Setting your position to " + str(printerpositiondefault[0][0]) + ", the default position.")
+                    control_area = facility[printerpositiondefault[0][0]]
+            else:
+                print(f"Setting your position to {control_area[0]}.")
                 printerpositiondefault = tuple((facility.items()))
-                print("I'm sorry, I can't seem to find " + position + ". Setting your position to " + str(printerpositiondefault[0][0]) + ", the default position.")
                 control_area = facility[printerpositiondefault[0][0]]
             try:
                 response = input("Do you want to print all departures on the ground? Reply with a '1' for yes, '0' for no: ")
