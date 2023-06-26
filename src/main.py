@@ -13,13 +13,18 @@ __author__ = "Simon Heck"
 class Main():
     def __init__(self) -> None:
         
-        json_url = "https://data.vatsim.net/v3/vatsim-data.json"
-        
         acft_json = "./data/acft_database.json"
+        airports = "./data/airports.json"
+        printerpositions = "./data/positions.json"
+
+        json_url = "https://data.vatsim.net/v3/vatsim-data.json"
+        sigmetJSON = "https://beta.aviationweather.gov/cgi-bin/data/airsigmet.php?format=json"
+        cwasJSON = "https://api.weather.gov/aviation/cwsus/"
+       
         cached_callsign_path = "./data/cached_departures_that_have_been_printed"
         # Full path used for debugging
         # cached_callsign_path = "C:\\Users\\simon\\OneDrive\\Documents\\Coding Projects\\strip-data-collector\\src\\cached_departures_that_have_been_printed"
-        printerpositions = "./data/positions.json"
+        
         # departure_airport = "KATL"
         control_area = ""        
         printed_callsigns = []
@@ -97,7 +102,7 @@ class Main():
         data_collector = DataCollector(json_url, control_area, printer, printed_callsigns, cached_callsign_path)
         callsign_requester = CallsignRequester(printer, data_collector, control_area)
         json_refresh = JSONRefreshTimer(data_collector)
-        wx_refresh = WXRadio(control_area)
+        wx_refresh = WXRadio(control_area, printer, airports, sigmetJSON, cwasJSON)
 
         # initial data grab
         data_collector.check_for_updates()
