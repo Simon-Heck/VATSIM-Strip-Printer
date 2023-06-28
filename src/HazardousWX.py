@@ -33,6 +33,12 @@ class WXRadio:
         for i in raw:
             isEligible = False
             #calculate if its reportable
+            siglat = []
+            siglon = []
+            for u in i["coords"]:
+                siglat.append(u["lat"])
+                siglon.append(u["lon"])
+            
             for u in i["coords"]:
                 if i["airSigmetId"] not in self.sigmet_list:
                     for fieldlist in control_area:
@@ -40,7 +46,12 @@ class WXRadio:
                             airport_lat = self.airportsPath[fieldlist]["LAT"]
                             airport_lon = self.airportsPath[fieldlist]["LON"]
                             sigmetlat, sigmetlon = u["lat"],u["lon"]
+
+                            #Check to see if any point of the sigmet is within 50 nm of the airfield
                             if ((sigmetlat - .8333 < airport_lat < sigmetlat + .8333) and (sigmetlon - .8333 < airport_lon < sigmetlon + .8333)):
+                                isEligible = True
+                            #If there isn't a point within 50 miles,  check to see if the airport is inside some huge box
+                            elif ((min(siglat) < airport_lat < max(siglat)) and (min(siglon) < airport_lon < max(siglon))):
                                 isEligible = True
                         except:
                             return
@@ -50,11 +61,11 @@ class WXRadio:
                 rawsigmet = i["rawAirSigmet"].splitlines()
                 self.sigmet_list.append(i["airSigmetId"])
                 if type == "SIGMET":
-                #    print(f'GI G1 {rawsigmet[2]} {rawsigmet[3]}... {rawsigmet[4]}... {rawsigmet[6]}{rawsigmet[7]} ...ZTLFD')
-                    self.printer.print_gi_messages(f'G1 {rawsigmet[2]} {rawsigmet[3]}... {rawsigmet[4]}... {rawsigmet[6]}{rawsigmet[7]} ...{(self.airportsPath[self.control_area["airports"][0]]["ARTCC"])}FD')
+                    self.printer.print_gi_messages(f'{rawsigmet[0]}{rawsigmet[1]}{rawsigmet[2]}{rawsigmet[3]}... {rawsigmet[4]}... {rawsigmet[5]}... {rawsigmet[6]}{rawsigmet[7]}')
+                #    self.printer.print_gi_messages(f'{rawsigmet[2]} {rawsigmet[3]}... {rawsigmet[4]}... {rawsigmet[6]}{rawsigmet[7]}')
                 elif type == "AIRMET":
-                #    print(f'GI G1 {rawsigmet[2]} {rawsigmet[3]} {rawsigmet[6]} ...ZTLFD')
-                    gi_message = (f'G1 {rawsigmet[2]} {rawsigmet[3]} {rawsigmet[6]} ...{(self.airportsPath[self.control_area["airports"][0]]["ARTCC"])}FD')
+                    gi_message = (f'{rawsigmet[0]}{rawsigmet[1]} {rawsigmet[2]} {rawsigmet[3]} {rawsigmet[4]} {rawsigmet[5]} {rawsigmet[6]}') 
+                #    gi_message = (f'{rawsigmet[2]} {rawsigmet[3]} {rawsigmet[6]}')
                     self.printer.print_gi_messages(gi_message)
     
     def fetch_cwas(self, api, center):
@@ -66,10 +77,9 @@ class WXRadio:
             id = i["properties"]["sequence"]
             advzy = i["properties"]
             if id not in self.cwa_list:
-                #print(["cwsu"])
                 cwsu = advzy['cwsu']
                 hazard = advzy["text"]
                 # print(f'GI G1 {cwsu} CWA {id} for {hazard}.')
-                gi_message = f'G1 {cwsu} CWA {id} for {hazard} ...{center}FD'
+                gi_message = f'***{cwsu} CWA {id} for {hazard}'
                 self.printer.print_gi_messages(gi_message)
                 self.cwa_list.append(id)
