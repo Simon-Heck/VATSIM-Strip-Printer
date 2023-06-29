@@ -41,8 +41,10 @@ class DataCollector:
         if '+' in new_pilot_route:
             new_pilot_route = new_pilot_route.replace('+', '')
 
+        if self.control_area['type'] == "GC" or self.control_area['type'] == "LC":
+            return
+        
         if pilot_callsign in self.callsign_list:
-           
             current_pilot_route:str = self.callsign_list[pilot_callsign]['flight_plan']['route']
             if '+' in current_pilot_route:
                 current_pilot_route = current_pilot_route.replace('+', '')
@@ -56,7 +58,6 @@ class DataCollector:
             self.callsign_list[pilot_callsign] = new_pilot_data_associated_with_callsign
 
     def scan_for_new_aircraft_automatic(self):
-        
         while(True):
             callsign_table = self.get_callsign_list()
             # TODO, lock callsign list to leep them synced
@@ -96,7 +97,7 @@ class DataCollector:
         
     def scan_pilots(self):
         connected_pilots = self.json_file['pilots']
-        lookupdefinitions = {"CD":"departure","TAR":"arrival","DR":"departure","COMBINED":"both"}
+        lookupdefinitions = {"CD":"departure","GC":"departure","LC":"departure","TAR":"arrival","DR":"departure","COMBINED":"both"}
 
         # Interpreting/Filtering JSON Data
         for i in range(len(connected_pilots)):

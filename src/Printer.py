@@ -44,7 +44,7 @@ class Printer:
             enroute_time = callsign_data['flight_plan']['enroute_time']
             cid = f"^FO110,1340^BCB,70,N,N,N,A^FD{callsign_data['cid']}" #Format barcode here...
             # cid = callsign_data['cid']
-            if control_area['airports'][0] != "KATL": #purge barcode if not ATL clearance
+            if control_area['airports'][0] != "KATL" or control_area['type'] != "CD": #purge barcode if not ATL clearance
                 cid = ""
             exit_fix = self.match_ATL_exit_fix(callsign_data['flight_plan']['route'])
             computer_id = self.generate_id(callsign_data['flight_plan']['remarks'])
@@ -120,7 +120,11 @@ class Printer:
             return ""
         
         # Split remark text into two sections and takes the data in the second half. Essentially deletes PBN data from the text. If no RMK/ exits, it will just use the first 18 characters
-        string_list = remark_string.split("RMK/")
+        if "RMK/" in remark_string:
+            string_list = remark_string.split("RMK/")
+        else:
+            string_list = remark_string
+
         if len(string_list) > 1:
             ret_string = f"{string_list[1][:18]}"
         else:
