@@ -6,8 +6,7 @@ Version: Python 3.11.3
   * Technical Advisor: Zack B)
 
 # In Progress:
-  * Print arrival strips
-  * Future proofing, I guess?
+  * Electronic Flight Strip Transfer System (EFSTS)
 
 # To do:
   * Add more comments and documentation
@@ -18,13 +17,12 @@ Version: Python 3.11.3
   * Add GUI elements to the program
 
 # Features:
-  * Barcode with pilot VATSIM CID on ATL strips(for strip scanning)
+  * Barcode with pilot VATSIM CID on ATL strips (for strip scanning)
   * Truncates route to first 3 waypoints
   * Prints only remarks after RMK/
   * Multi-threaded to simultaneously listen for user input, update JSON data, and scan for new departures
   * Print Hazardous Weather Information
   * Others
-
 
 # Hardware:
   * [ZebraZD410 Printer](https://www.zebra.com/us/en/products/spec-sheets/printers/desktop/zd410.html)
@@ -42,4 +40,3 @@ Run python on [main.py](src/main.py). For example:
 ```
 python main.py
 ```
-  

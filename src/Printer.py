@@ -120,7 +120,11 @@ class Printer:
             return ""
         
         # Split remark text into two sections and takes the data in the second half. Essentially deletes PBN data from the text. If no RMK/ exits, it will just use the first 18 characters
-        string_list = remark_string.split("RMK/")
+        if "RMK/" in remark_string:
+            string_list = remark_string.split("RMK/")
+        else:
+            string_list = remark_string
+
         if len(string_list) > 1:
             ret_string = f"{string_list[1][:18]}"
         else:
