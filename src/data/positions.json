@@ -8,5 +8,6 @@
             "A80-DR":{"airports":["KATL"],"type":"DR"},
             "A80-TAR":{"airports":["KATL"],"type":"TAR"}},
     "ZTL":{ "ZTL-FD":{"airports":["KATL", "KCLT", "KPDK", "KAHN", "KFTY", "KRYY", "KMGE", "KLZU", "KMCN", "KWRB", "KCSG", "KLSF", "KAGS", "KAVL", "KBHM", "KTCL", "KCHA", "KGSO", "KINT", "KGSP", "KGMU", "KGYH", "KHKY", "KJQF", "KVUJ", "KMGM", "KMXF", "KTRI", "KTYS"],"type":"COMBINED"}},
-    "PAO":{ "PAO-CD":{"airports":["KPAO"],"type":"CD"}}
+    "PAO":{ "PAO-CD":{"airports":["KPAO"],"type":"CD"}},
+    "STL":{ "STL-CD":{"airports":["KSTL"],"type":"CD"}}
 }}
