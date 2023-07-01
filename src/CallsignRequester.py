@@ -21,8 +21,10 @@ class CallsignRequester:
             #Process inputted value accordingly.
             if flag == "Print":
                 self.request_callsign(callsign_to_print)
-            elif flag == "SCAN":
+            elif flag == "Scan":
                 print("SCAN STRIP!")
+            elif flag == "TEST":
+                self.printer.print_memoryAids()
     
     def request_callsign(self, callsign):
         callsign_to_print = callsign.upper()
@@ -30,19 +32,23 @@ class CallsignRequester:
 
     def determineFlag(self,callsign_to_print):
         flag = "Print"
+        #Detect if this is to print memory aids
+        if callsign_to_print.lower() == "memoryaids":
+            return "TEST"
+
         #What are we doing with this? Depends on what position the guy is working, maybe?
         #If they're NOT working Ground or Local, they shouldn't be scanning strips.
         if self.control_area["type"] != "GC" and self.control_area["type"] != "LC": 
-            flag = "Print"
-            return flag
+            return "Print"
         else:
             if len(callsign_to_print) < 6: #If the callsign is less than 6 characters, it can NOT be a CID. Therefore, we're printing a flight strip.    
-                flag = "Print"               
-            elif (callsign_to_print.replace("V","",1)).isnumeric(): #We're checking to see if the callsign starts with a "V" to indicate "visual separation".
-                flag = "Scan"
+                return "Print"               
+            elif (callsign_to_print.upper().replace("V","",1)).isnumeric(): #We're checking to see if the callsign starts with a "V" to indicate "visual separation".
+                return "Scan"
             elif callsign_to_print.isalnum(): #If the callsign has numbers AND letters, it can NOT be a CID. Therefore, we're printing a flight strip.
-                flag = "Print"
-            return flag
+                return "Print"
+            else:
+                return flag
 
             #If callsign, print strip
             #If not callsign, function changes depending on GND or TWR

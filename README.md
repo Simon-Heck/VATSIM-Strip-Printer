@@ -7,6 +7,7 @@ Version: Python 3.11.3
 
 # In Progress:
   * Electronic Flight Strip Transfer System (EFSTS)
+  * Print all the memory aid shit
 
 # To do:
   * Add more comments and documentation
@@ -28,7 +29,9 @@ Version: Python 3.11.3
   * [ZebraZD410 Printer](https://www.zebra.com/us/en/products/spec-sheets/printers/desktop/zd410.html)
   * [1x8 Flight Strips](https://bocathermal.txdesign.com/thermal-general-admission-ticket/details/boca-flight-strip-1-x-8/)
   * Computer with [python](https://www.python.org/downloads/) 3.1 or greater
-  * 
+  * theres a certain font to install. i know its not hardware but this is a place holder
+
+
 # How to Run:
   * Aquire the following modules:
 ```

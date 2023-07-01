@@ -76,11 +76,12 @@ class Main():
                 printerpositiondefault = tuple((facility.items()))
                 control_area = facility[printerpositiondefault[0][0]]
             try:
-                response = input("Do you want to print all departures on the ground? Reply with a '1' for yes, '0' for no: ")
-                print_all_departures = bool(int(response))
-                if(print_all_departures):
-                    response = input(f"This will possibly print up to {len(current_callsigns_cached)} strips. Reply '1' for yes, '0' for no: ")
+                if control_area['auto_Print_Strips']: #If the position is configured to NOT auto-print strips... these settings are useless... so might as well skip 'em.
+                    response = input("Do you want to print all departures on the ground? Reply with a '1' for yes, '0' for no: ")
                     print_all_departures = bool(int(response))
+                    if(print_all_departures):
+                        response = input(f"This will possibly print up to {len(current_callsigns_cached)} strips. Reply '1' for yes, '0' for no: ")
+                        print_all_departures = bool(int(response))
                     
                 if(print_all_departures):
                     response = input(f"Do you want to clear the {len(current_callsigns_cached)} cached strips? Reply '1' for yes, '0' for no: ")

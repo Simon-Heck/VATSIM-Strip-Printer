@@ -2,7 +2,6 @@ import time
 import json
 import requests
 from Printer import Printer
-from DataCollector import control_areas
 
 __author__ = "Zackaria Bomenir"
 
@@ -13,13 +12,15 @@ class WXRadio:
         self.airports = airports
         self.sigmetJSON = sigmetJSON
         self.cwasJSON = cwasJSON
-        self.jurisdictionPath = control_areas
         self.airportsPath = json.load(open(airports))['airfields']
         self.control_area = []
         self.control_area = control_area
         self.printer = printer
 
     def start_refreshing(self, delay:int = 300):
+        self.fetch_sigmet(self.sigmetJSON, self.control_area["airports"])
+        self.fetch_cwas(self.cwasJSON, self.airportsPath[self.control_area["airports"][0]]["ARTCC"])
+        time.sleep(self.wxsync())
         while(True):
             self.fetch_sigmet(self.sigmetJSON, self.control_area["airports"])
             self.fetch_cwas(self.cwasJSON, self.airportsPath[self.control_area["airports"][0]]["ARTCC"])
@@ -83,3 +84,14 @@ class WXRadio:
                 gi_message = f'***{cwsu} CWA {id} for {hazard}'
                 self.printer.print_gi_messages(gi_message)
                 self.cwa_list.append(id)
+
+    def wxsync(self):
+        #Sync up the time so that if theres a bunch of printers... they all print at the same time?
+        timenow = tuple(time.gmtime())
+        
+        minutes = timenow[4]
+        while (minutes > 5):
+            minutes = minutes - 5
+        
+        delaytime = ((5 - minutes) * 60) + 60
+        return delaytime

@@ -9,7 +9,7 @@ airfields = "./data/airports.json"
 airports = (json.load(open(airfields)))['airfields']
 
 positions = "./data/positions.json"
-control_areas = json.load(open(positions))['facilities']
+config = json.load(open(positions))
 
 
 
@@ -24,7 +24,8 @@ class DataCollector:
         self.printed_callsigns = cached_printed_departures
         self.cached_departures_file_path = cached_departures_file_path
         # TODO Load from saved JSON File
-        self.control_area_dict = control_areas
+        self.control_area_dict = config['facilities']
+        self.fence = config['fence_data']
 
     def check_for_updates(self):
         self.update_json(self.json_url)
@@ -40,9 +41,6 @@ class DataCollector:
         new_pilot_route:str = new_pilot_data_associated_with_callsign['flight_plan']['route']
         if '+' in new_pilot_route:
             new_pilot_route = new_pilot_route.replace('+', '')
-
-        if self.control_area['type'] == "GC" or self.control_area['type'] == "LC":
-            return
         
         if pilot_callsign in self.callsign_list:
             current_pilot_route:str = self.callsign_list[pilot_callsign]['flight_plan']['route']
@@ -58,7 +56,7 @@ class DataCollector:
             self.callsign_list[pilot_callsign] = new_pilot_data_associated_with_callsign
 
     def scan_for_new_aircraft_automatic(self):
-        while(True):
+        while(self.control_area['auto_Print_Strips']): #This used to be while(True)
             callsign_table = self.get_callsign_list()
             # TODO, lock callsign list to leep them synced
             for callsign_to_print in callsign_table:
@@ -78,16 +76,15 @@ class DataCollector:
             return self.callsign_list.get(callsign)
     
     def in_geographical_region_wip(self, control_area:str, departure:str, airplane_lat_long:tuple) -> bool:
-        fence = {"CD":.026079,"TAR":1,"COMBINED":1}
         airports_dict = airports
 
         #create fence
-        #KATL NW Lat_Long point
-        northern_latitude = airports_dict.get(departure)["LAT"] + fence[control_area["type"]]
-        western_longitude = airports_dict.get(departure)["LON"] - fence[control_area["type"]]
-        #KATL SE Lat_long point
-        southern_latitude = airports_dict.get(departure)["LAT"] - fence[control_area["type"]]
-        eastern_longitude = airports_dict.get(departure)["LON"] + fence[control_area["type"]]
+        #Airport NW Lat_Long point
+        northern_latitude = airports_dict.get(departure)["LAT"] + self.fence[control_area["type"]]
+        western_longitude = airports_dict.get(departure)["LON"] - self.fence[control_area["type"]]
+        #Airport SE Lat_long point
+        southern_latitude = airports_dict.get(departure)["LAT"] - self.fence[control_area["type"]]
+        eastern_longitude = airports_dict.get(departure)["LON"] + self.fence[control_area["type"]]
 
         # airplane lat_long position
         airplane_lat, airplane_long = airplane_lat_long
@@ -97,12 +94,12 @@ class DataCollector:
         
     def scan_pilots(self):
         connected_pilots = self.json_file['pilots']
-        lookupdefinitions = {"CD":"departure","GC":"departure","LC":"departure","TAR":"arrival","DR":"departure","COMBINED":"both"}
+        #lookupdefinitions = {"CD":"departure","GC":"departure","LC":"departure","TAR":"arrival","DR":"departure","COMBINED":"both"}
 
         # Interpreting/Filtering JSON Data
         for i in range(len(connected_pilots)):
             #What field should we check for? Departing or Arriving?
-            lookfor = lookupdefinitions[self.control_area['type']]
+            lookfor = self.control_area['stripType']
             # pilot at index i information
             current_pilot = connected_pilots[i]
             try:
