@@ -10,5 +10,6 @@
     "PAO":{ "PAO-CD":{"airports":["KPAO"],"type":"CD","auto_Print_Strips":true,"hasBarcode":false,"stripType":"departure"}},
     "ORD":{ "ORD-CD":{"airports":["KORD"],"type":"LC","auto_Print_Strips":false,"hasBarcode":true,"stripType":"departure"}}
 },
+"delayReporting":{"averageTaxiTime":10,"discordWebhook":"https://discord.com/api/webhooks/1124601273078005830/Nf2AARyX5Gif_gszLx4qYfp6Jf4_2p_4OfBhExtz-yMES84F3SQMscfFq5UTxkyunIEf"},
 "fence_data":{"CD":0.026079,"GC":0.026079,"LC":0.026079,"TAR":1,"COMBINED":1}
 }
