@@ -27,15 +27,10 @@ class Scanner:
         self.control_area = control_area
         self.controlType = control_area['type']
         self.sigmetJSON = sigmetJSON
-        position_file = open(printerpositions, 'rb')
-        config = json.load(position_file)
-        position_file.close()
+        config = printerpositions
         self.averageTaxiTime = config['delayReporting']['averageTaxiTime']
         self.discord = config['delayReporting']['discordWebhook']
-        airfields = open(airfields, 'rb')
-        self.airports = json.load(airfields)
-        airfields.close()
-        
+        self.airports = airfields        
         self.sigmets = []
         self.queue = {} #Format is callsign:time.time(). Example: queue = {"N69":time.time()}
         self.totalDelay = {} #Format is "callsign":{"totalDelay":0, "outTime":0}. "Example = totalDelay = {N70":{"totalDelay":0,"outTime":0}} 

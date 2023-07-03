@@ -13,23 +13,31 @@ __author__ = "Simon Heck"
 
 class Main():
     def __init__(self) -> None:
-        
         acft_json = "./data/acft_database.json"
-        airports = "./data/airports.json"
-        printerpositions = "./data/positions.json"
+        airports_path = "./data/airports.json"
+        printerpositions_path = "./data/positions.json"
 
         json_url = "https://data.vatsim.net/v3/vatsim-data.json"
         sigmetJSON = "https://beta.aviationweather.gov/cgi-bin/data/airsigmet.php?format=json"
         cwasJSON = "https://api.weather.gov/aviation/cwsus/"
        
         cached_callsign_path = "./data/cached_departures_that_have_been_printed"
-        # Full path used for debugging
-        # cached_callsign_path = "C:\\Users\\simon\\OneDrive\\Documents\\Coding Projects\\strip-data-collector\\src\\cached_departures_that_have_been_printed"
-        
-        # departure_airport = "KATL"
-        control_area = ""        
+
+        control_area = ""
         printed_callsigns = []
         # TODO: Handle empty pickle file
+
+
+        #7/3 BEGIN
+        printer_positions_file = open(printerpositions_path, 'rb')
+        printer_positions = json.load(printer_positions_file)
+        printer_positions_file.close()
+
+        airfields_file = open(airports_path, 'rb')
+        airports = json.load(airfields_file)
+        airfields_file.close()
+
+        #7/3 END
 
         try:
             printed_callsign_file = open(cached_callsign_path, "rb")
@@ -45,7 +53,7 @@ class Main():
             #Load facility choices from positions.json
             print("Initializing setup...")
             print("Please select your control facility. Your choices are:")
-            facilities = (json.load(open(printerpositions)))["facilities"]
+            facilities = printer_positions["facilities"]
             for i in facilities:
                 print(i)
             facility = input()
@@ -101,8 +109,8 @@ class Main():
         printed_callsigns = current_callsigns_cached
         
         printer = Printer(acft_json) 
-        data_collector = DataCollector(json_url, control_area, printer, printed_callsigns, cached_callsign_path)
-        efsts = Scanner(control_area, sigmetJSON, printerpositions, airports, data_collector)
+        data_collector = DataCollector(json_url, control_area, printer, printed_callsigns, cached_callsign_path, printer_positions, airports)
+        efsts = Scanner(control_area, sigmetJSON, printer_positions, airports, data_collector)
         callsign_requester = CallsignRequester(printer, data_collector, control_area, efsts)
         json_refresh = JSONRefreshTimer(data_collector)
         wx_refresh = WXRadio(control_area, printer, airports, sigmetJSON, cwasJSON)
