@@ -15,6 +15,7 @@ Version: Python 3.11.3
   * Don't print VFR strips/Don't print amended VFR strips?
   * sync data refresh with VATSIM data refresh cycle
   * Clean up Code for new airports. Add new airports. Store in JSON?
+  * Add visual flag to scanner elements. Build network for scanner.
   * Add GUI elements to the program
 
 # Features:
@@ -43,3 +44,8 @@ Run python on [main.py](src/main.py). For example:
 ```
 python main.py
 ```
+
+
+# Commands:
+ * PURGE - Clears queue count for delay reporting
+ * Memoryaids - Prints several memory aids, including STOP and NO LUAW.
