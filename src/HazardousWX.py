@@ -3,7 +3,7 @@ import json
 import requests
 from Printer import Printer
 
-__author__ = "Zackaria Bomenir"
+__author__ = "Zackaria Bomenir", "Simon Heck"
 
 class WXRadio:
     def __init__(self, control_area, printer:Printer, airports, sigmetJSON, cwasJSON) -> None:

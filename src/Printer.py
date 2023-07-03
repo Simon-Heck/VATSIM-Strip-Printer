@@ -58,8 +58,6 @@ class Printer:
         #    self.print_strip(pos1=callsign, pos2=ac_type, pos3=amendment_number, pos4A=computer_id, pos4B=cid, pos2A=exit_fix, pos5=assigned_sq, pos6=departure_time, pos7=cruise_alt, pos8=departure_airport,pos9=flightplan, pos9D=destination, pos9A=remarks)
 
         else:
-        #    if control_area['type'] != "CD" and control_area['type'] != "COMBINED": ###What was the point of this, again? I know I added it but I forgot...
-        #        return
             airfields = str.replace(str.replace(str.replace(str(list.copy(control_area['airports'])),"'",""),"[",""),"]","")
             print(f"Could not find {requested_callsign} in {airfields} proposals. Nice going, dumbass.")
     
