@@ -1,0 +1,12 @@
+{"facilities":{
+    "ATL":{ "ATL-CD":{"airports":["KATL"],"type":"CD"},
+            "ATL-GCN":{"airports":["KATL"],"type":"GC"},
+            "ATL-LC2":{"airports":["KATL"],"type":"LC"},
+            "ATL-ALL":{"airports":["KATL"],"type":"COMBINED"}},
+    "A80":{ "A80-ALL":{"airports":["KATL", "KPDK", "KAHN", "KFTY", "KRYY", "KMGE", "KLZU", "KMCN", "KWRB", "KCSG", "KLSF", "KVPC", "KPUJ", "20GA", "KCCO", "KFFC", "KHMP", "6A2", "7GA7", "KCVC", "GA80", "KCNI", "KCTJ", "KGVL", "KJCA", "KWDR", "D73", "52A", "KCPP", "KMLJ", "KOKZ", "KDBN", "KSBO", "KEZM", "48A", "KPXE", "KMAC", "51A", "53A", "KACJ", "6A1", "KOPN", "KPIM", "KLGC", "7A3", "KAUO", "06A", "07A", "KEUF", "4GA5", "5A9"],"type":"COMBINED"},
+            "A80-SAT":{"airports":["KPDK", "KAHN", "KFTY", "KRYY", "KMGE", "KLZU", "KMCN", "KWRB", "KCSG", "KLSF", "KVPC", "KPUJ", "20GA", "KCCO", "KFFC", "KHMP", "6A2", "7GA7", "KCVC", "GA80", "KCNI", "KCTJ", "KGVL", "KJCA", "KWDR", "D73", "52A", "KCPP", "KMLJ", "KOKZ", "KDBN", "KSBO", "KEZM", "48A", "KPXE", "KMAC", "51A", "53A", "KACJ", "6A1", "KOPN", "KPIM", "KLGC", "7A3", "KAUO", "06A", "07A", "KEUF", "4GA5", "5A9"],"type":"COMBINED"},
+            "A80-DR":{"airports":["KATL"],"type":"DR"},
+            "A80-TAR":{"airports":["KATL"],"type":"TAR"}},
+    "ZTL":{ "ZTL-FD":{"airports":["KATL", "KCLT", "KPDK", "KAHN", "KFTY", "KRYY", "KMGE", "KLZU", "KMCN", "KWRB", "KCSG", "KLSF", "KAGS", "KAVL", "KBHM", "KTCL", "KCHA", "KGSO", "KINT", "KGSP", "KGMU", "KGYH", "KHKY", "KJQF", "KVUJ", "KMGM", "KMXF", "KTRI", "KTYS"],"type":"COMBINED"}},
+    "PAO":{ "PAO-CD":{"airports":["KPAO"],"type":"CD"}}
+}}
