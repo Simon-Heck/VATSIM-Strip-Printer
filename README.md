@@ -47,5 +47,6 @@ python main.py
 
 
 # Commands:
- * PURGE - Clears queue count for delay reporting
+ * Purge - Clears queue count for delay reporting
  * Memoryaids - Prints several memory aids, including STOP and NO LUAW.
+ * Times - Prints the current taxi times & associated callsigns.

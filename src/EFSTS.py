@@ -70,6 +70,16 @@ class Scanner:
         self.totalDelay = {}
         self.maxReportedDelay = 0
 
+    def listTimes(self):
+        self.times = {}
+        for x in self.queue.copy():
+            currentTime = time.time()
+            aircraftDelay = (currentTime - self.queue[x]) / 60
+            aircraftDelay = math.floor(aircraftDelay)
+            self.times[x] = aircraftDelay
+        print(self.times)
+
+
     def opsNet(self):
         self.maxReportedDelay = 0
         while True:
