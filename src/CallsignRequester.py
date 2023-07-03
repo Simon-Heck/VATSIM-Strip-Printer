@@ -19,7 +19,7 @@ class CallsignRequester:
             callsign_to_print = input("Enter Callsign: ")
 
             #Figure out what to do with the inputted value.
-            flag = self.determineFlag(callsign_to_print.upper())
+            flag = self.determineFlag(callsign_to_print.lower())
 
             #Process inputted value accordingly.
             if flag == "Print":
@@ -32,6 +32,9 @@ class CallsignRequester:
                 self.scan.purgeQueue()
             elif flag == "TIME":
                 self.scan.listTimes()
+            elif flag == "DROP":
+                callsign_to_print = callsign_to_print[4:].strip()
+                self.scan.dropTime(callsign_to_print)
     
     def request_callsign(self, callsign):
         callsign_to_print = callsign.upper()
@@ -41,11 +44,13 @@ class CallsignRequester:
         flag = "Print"
         Visual = False
         #Detect if this is to print memory aids
-        if callsign_to_print.lower() == "memoryaids":
+        callsign_to_print = callsign_to_print.lower()
+        callsign_to_print = callsign_to_print.strip()
+        if callsign_to_print == "memoryaids":
             return "TEST"
-        if callsign_to_print.lower() == "purge":
+        if callsign_to_print == "purge":
             return "PURGE"
-        if callsign_to_print.lower() == "times":
+        if callsign_to_print == "times":
             return "TIME"
 
         #What are we doing with this? Depends on what position the guy is working, maybe?
@@ -54,9 +59,12 @@ class CallsignRequester:
             return "Print"
         else:
             if len(callsign_to_print) < 6: #If the callsign is less than 6 characters, it can NOT be a CID. Therefore, we're printing a flight strip.    
-                return "Print"               
+                return "Print"     
+            elif callsign_to_print[0:4] == "drop":
+                return "DROP"          
             elif (callsign_to_print.upper().replace("V","",1)).isnumeric(): #We're checking to see if the callsign starts with a "V" to indicate "visual separation".
-                #TODO: Add functionality to detect if visual separation is being applied.
+                if callsign_to_print[0] == "V" and callsign_to_print[1].isnumeric():
+                    Visual = True
                 return "Scan"
             elif callsign_to_print.isalnum(): #If the callsign has numbers AND letters, it can NOT be a CID. Therefore, we're printing a flight strip.
                 return "Print"

@@ -66,16 +66,16 @@ class DataCollector:
         else:
             return self.callsign_list.get(callsign)
     
-    def in_geographical_region_wip(self, control_area:str, departure:str, airplane_lat_long:tuple) -> bool:
+    def in_geographical_region_wip(self, control_area:str, airport:str, airplane_lat_long:tuple) -> bool:
         airports_dict = self.airports['airfields']
 
         #create fence
         #Airport NW Lat_Long point
-        northern_latitude = airports_dict.get(departure)["LAT"] + self.fence[control_area["type"]]
-        western_longitude = airports_dict.get(departure)["LON"] - self.fence[control_area["type"]]
+        northern_latitude = airports_dict.get(airport)["LAT"] + self.fence[control_area["type"]]
+        western_longitude = airports_dict.get(airport)["LON"] - self.fence[control_area["type"]]
         #Airport SE Lat_long point
-        southern_latitude = airports_dict.get(departure)["LAT"] - self.fence[control_area["type"]]
-        eastern_longitude = airports_dict.get(departure)["LON"] + self.fence[control_area["type"]]
+        southern_latitude = airports_dict.get(airport)["LAT"] - self.fence[control_area["type"]]
+        eastern_longitude = airports_dict.get(airport)["LON"] + self.fence[control_area["type"]]
 
         # airplane lat_long position
         airplane_lat, airplane_long = airplane_lat_long

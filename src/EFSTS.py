@@ -69,6 +69,7 @@ class Scanner:
         self.queue = {}
         self.totalDelay = {}
         self.maxReportedDelay = 0
+        print("Queue purged. Current delays set to 0.")
 
     def listTimes(self):
         self.times = {}
@@ -77,7 +78,14 @@ class Scanner:
             aircraftDelay = (currentTime - self.queue[x]) / 60
             aircraftDelay = math.floor(aircraftDelay)
             self.times[x] = aircraftDelay
-        print(self.times)
+        print(f"Normal airport taxi time: {self.averageTaxiTime} minutes. Current taxi times:{self.times}.")
+
+    def dropTime(self,callsign):
+        try:
+            self.queue.pop(callsign)
+            print(f"Removed {callsign} from delay tracking.")
+        except:
+            print(f"Unable to find {callsign}. Sorry!")
 
 
     def opsNet(self):
@@ -145,7 +153,7 @@ class Scanner:
 
         charge = cause.split(":")
         chargeCategory = {"WX":"Weather", "EQUIPMENT":"Equipment", "RWY":"Runway/Taxiway","VOL":"Volume","OTHER":"Other"}
-        chargeClass = {"LOCIGS":"Low Ceilings","TSTORMS":"Thunderstorms","WIND":"Wind","LOVIS":"Low Visibility","FOG":"Fog","SNO":"Snow/Ice","TOR":"Tornado/Hurricane","BRAKING":"Poor/Nil Braking Action","RAIN":"Rain","RWY":"Runway","LTG":"Lightning Strike","FAA":"FAA (STARS/ERAM)","NOFAA":"Non-FAA","RWYCHG":"Runway Change - Operational Advantage","NOISE":"Noise Abatement","DISABLED AC":"Disabled Aircraft","COMPACT":"Compacted Demand","MULTI":"Multi-Taxi","VOL":"Volume","":"Airshow","EMER":"Aircraft Emergency","RDO":"Aircraft Radio","MIKE":"Aircraft Stuck Mike","BIRDS":"Bird Strike","FIRE":"Fire","FLC":"Flight Check","MIL":"Military Operations","PRM":"Precision Runway Monitor (PRM) non-equipage","LAHSO":"Aircraft/Pilot unable to perform land and hold short operations (LAHSO)","SEC":"Security","VIP":"VIP Movement","LUAW":"Line Up And Wait","OTHER":"Other"}
+        chargeClass = {"LOCIGS":"Low Ceilings","TSTORMS":"Thunderstorms","TSTORMS":"Thunderstorms","WIND":"Wind","LOVIS":"Low Visibility","FOG":"Fog","SNO":"Snow/Ice","TOR":"Tornado/Hurricane","BRAKING":"Poor/Nil Braking Action","RAIN":"Rain","RWY":"Runway","LTG":"Lightning Strike","FAA":"FAA (STARS/ERAM)","NOFAA":"Non-FAA","RWYCHG":"Runway Change - Operational Advantage","NOISE":"Noise Abatement","DISABLED AC":"Disabled Aircraft","COMPACT":"Compacted Demand","MULTI":"Multi-Taxi","VOL":"Volume","":"Airshow","EMER":"Aircraft Emergency","RDO":"Aircraft Radio","MIKE":"Aircraft Stuck Mike","BIRDS":"Bird Strike","FIRE":"Fire","FLC":"Flight Check","MIL":"Military Operations","PRM":"Precision Runway Monitor (PRM) non-equipage","LAHSO":"Aircraft/Pilot unable to perform land and hold short operations (LAHSO)","SEC":"Security","VIP":"VIP Movement","LUAW":"Line Up And Wait","OTHER":"Other"}
 
         aeroport = self.control_area['airports'][0]
         content = {"content":f"""D/D from {aeroport}, {status}{value} due to {cause}.
@@ -160,24 +168,31 @@ class Scanner:
         metarJSON = requests.get(f'https://api.weather.gov/stations/{(self.control_area["airports"][0])}/observations/latest').json()
         rawMetar = metarJSON['properties']['rawMessage']
         textDescription = metarJSON['properties']['textDescription']
+        textDescription = textDescription.lower()
         
         wx = {"fog_mist":"LOVIS", "dust_storm":"LOVIS", "dust":"LOVIS", "drizzle":"RAIN", "funnel_cloud":"TOR", "fog":"FOG", "smoke":"LOVIS", "hail":"TSTORMS", "snow_pellets":"SNO", "haze":"LOVIS", "ice_crystals":"SNO", "ice_pellets":"SNO", "dust_whirls":"TOR", "spray":"RAIN", "rain":"RAIN", "sand":"LOVIS", "snow_grains":"LOVIS", "snow":"SNO", "squalls":"TSTORMS", "sand_storm":"TSTORMS", "thunderstorms":"TSTORMS", "unknown":"OTHER", "volcanic_ash":"LOVIS"}
         wxCharge = False
+        volumeCharge = False
 
         #Check if its one of the weather conditions listed in "wx".
         for condition in wx:
             if condition in textDescription:
-                wxCharge = condition
-                print(condition)
+                wxCharge = wx[condition]
                 continue
+        
+        if len(self.queue) >= self.reportInterval + self.averageTaxiTime:
+            volumeCharge = True
+
 
         #Assign a cause.
         if wxCharge is not False:
             return f"WX:{wxCharge}"
         elif self.sigmets is not None:
             return "WX:TSTORMS"
+        elif volumeCharge:
+            return "VOL:VOL"
         else:
-            return "VOL:Volume"
+            return "OTHER:OTHER"
 
     def pushDeparture(self,callsign):
         visualFlag = False
