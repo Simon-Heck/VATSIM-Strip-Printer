@@ -13,7 +13,7 @@ __author__ = "Simon Heck"
 
 class Main():
     def __init__(self) -> None:
-        acft_json = "./data/acft_database.json"
+        acft_json_path = "./data/acft_database.json"
         airports_path = "./data/airports.json"
         printerpositions_path = "./data/positions.json"
 
@@ -36,6 +36,10 @@ class Main():
         airfields_file = open(airports_path, 'rb')
         airports = json.load(airfields_file)
         airfields_file.close()
+        
+        acft_file = open(acft_json_path, 'rb')
+        acft_json = json.load(acft_file)
+        acft_file.close()
 
         #7/3 END
 

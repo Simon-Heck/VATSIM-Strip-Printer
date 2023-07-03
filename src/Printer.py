@@ -7,11 +7,9 @@ import json
 __author__ = "Simon Heck"
 
 class Printer:
-    def __init__(self, acrft_json_path) -> None:
+    def __init__(self, acrft_json) -> None:
         #Pull RECAT database
-        json_file = open(acrft_json_path)
-        self.recat_db = json.load(json_file)
-        json_file.close()
+        self.recat_db = acrft_json
         self.zebra = Zebra()
         Q = self.zebra.getqueues()
         self.zebra.setqueue(Q[0])
