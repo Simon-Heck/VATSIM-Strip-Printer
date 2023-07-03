@@ -6,11 +6,11 @@ Version: Python 3.11.3
   * Technical Advisor: Zack B)
 
 # In Progress:
-  * Electronic Flight Strip Transfer System (EFSTS)
-  * Print all the memory aid shit
+  * Electronic Flight Strip Transfer System (EFSTS) / Networking
+  * Print all the memory aid things
+  * Add more comments and documentation
 
 # To do:
-  * Add more comments and documentation
   * Make starting text prompts easier to understand
   * Don't print VFR strips/Don't print amended VFR strips?
   * sync data refresh with VATSIM data refresh cycle
@@ -24,6 +24,7 @@ Version: Python 3.11.3
   * Prints only remarks after RMK/
   * Multi-threaded to simultaneously listen for user input, update JSON data, and scan for new departures
   * Print Hazardous Weather Information
+  * Log airport delays & limited logic to determine cause.
   * Others
 
 # Hardware:
@@ -47,6 +48,7 @@ python main.py
 
 
 # Commands:
- * Purge - Clears queue count for delay reporting
  * Memoryaids - Prints several memory aids, including STOP and NO LUAW.
  * Times - Prints the current taxi times & associated callsigns.
+ * Purge - Clears queue count for delay reporting
+ * DROP (Callsign) - Removes cid from queue counter.
