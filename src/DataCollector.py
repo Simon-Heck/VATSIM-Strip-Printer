@@ -5,18 +5,8 @@ import json
 import pickle
 __author__ = "Simon Heck"
 
-airfields = "./data/airports.json"
-airports = (json.load(open(airfields)))['airfields']
-
-positions = "./data/positions.json"
-config = json.load(open(positions))
-
-
-
-
-
 class DataCollector:
-    def __init__(self, json_url:str, control_area:str, printer:Printer, cached_printed_departures:list, cached_departures_file_path:str) -> None:
+    def __init__(self, json_url:str, control_area:str, printer:Printer, cached_printed_departures:list, cached_departures_file_path:str, positions: dict, airports:dict) -> None:
         self.callsign_list = {}
         self.json_url = json_url
         self.control_area = control_area
@@ -24,8 +14,9 @@ class DataCollector:
         self.printed_callsigns = cached_printed_departures
         self.cached_departures_file_path = cached_departures_file_path
         # TODO Load from saved JSON File
-        self.control_area_dict = config['facilities']
-        self.fence = config['fence_data']
+        self.control_area_dict = positions['facilities']
+        self.fence = positions['fence_data']
+        self.airports = airports
 
     def check_for_updates(self):
         self.update_json(self.json_url)
@@ -76,7 +67,7 @@ class DataCollector:
             return self.callsign_list.get(callsign)
     
     def in_geographical_region_wip(self, control_area:str, departure:str, airplane_lat_long:tuple) -> bool:
-        airports_dict = airports
+        airports_dict = self.airports['airfields']
 
         #create fence
         #Airport NW Lat_Long point

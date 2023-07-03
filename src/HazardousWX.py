@@ -3,27 +3,26 @@ import json
 import requests
 from Printer import Printer
 
-__author__ = "Zackaria Bomenir"
+__author__ = "Zackaria Bomenir", "Simon Heck"
 
 class WXRadio:
     def __init__(self, control_area, printer:Printer, airports, sigmetJSON, cwasJSON) -> None:
         self.sigmet_list = []
         self.cwa_list = []  
-        self.airports = airports
+        self.airports = airports['airfields']
         self.sigmetJSON = sigmetJSON
         self.cwasJSON = cwasJSON
-        self.airportsPath = json.load(open(airports))['airfields']
         self.control_area = []
         self.control_area = control_area
         self.printer = printer
 
     def start_refreshing(self, delay:int = 300):
         self.fetch_sigmet(self.sigmetJSON, self.control_area["airports"])
-        self.fetch_cwas(self.cwasJSON, self.airportsPath[self.control_area["airports"][0]]["ARTCC"])
+        self.fetch_cwas(self.cwasJSON, self.airports[self.control_area["airports"][0]]["ARTCC"])
         time.sleep(self.wxsync())
         while(True):
             self.fetch_sigmet(self.sigmetJSON, self.control_area["airports"])
-            self.fetch_cwas(self.cwasJSON, self.airportsPath[self.control_area["airports"][0]]["ARTCC"])
+            self.fetch_cwas(self.cwasJSON, self.airports[self.control_area["airports"][0]]["ARTCC"])
             time.sleep(delay)
             
 
@@ -44,8 +43,8 @@ class WXRadio:
                 if i["airSigmetId"] not in self.sigmet_list:
                     for fieldlist in control_area:
                         try:
-                            airport_lat = self.airportsPath[fieldlist]["LAT"]
-                            airport_lon = self.airportsPath[fieldlist]["LON"]
+                            airport_lat = self.airports[fieldlist]["LAT"]
+                            airport_lon = self.airports[fieldlist]["LON"]
                             sigmetlat, sigmetlon = u["lat"],u["lon"]
 
                             #Check to see if any point of the sigmet is within 50 nm of the airfield
@@ -70,7 +69,7 @@ class WXRadio:
                     self.printer.print_gi_messages(gi_message)
     
     def fetch_cwas(self, api, center):
-        api = f'{self.cwasJSON}{(self.airportsPath[self.control_area["airports"][0]]["ARTCC"])}/cwas'
+        api = f'{self.cwasJSON}{(self.airports[self.control_area["airports"][0]]["ARTCC"])}/cwas'
         r = requests.get(api)
         raw = r.json()
         # print(raw)

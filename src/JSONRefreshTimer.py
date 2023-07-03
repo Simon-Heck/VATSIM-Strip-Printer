@@ -3,7 +3,7 @@ import time
 import requests
 import re
 
-__author__ = "Simon Heck"
+__author__ = "Zack B"
 
 class JSONRefreshTimer:
     def __init__(self, data_collector:DataCollector) -> None:

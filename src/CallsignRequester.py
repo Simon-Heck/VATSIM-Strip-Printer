@@ -30,6 +30,8 @@ class CallsignRequester:
                 self.printer.print_memoryAids()
             elif flag == "PURGE":
                 self.scan.purgeQueue()
+            elif flag == "TIME":
+                self.scan.listTimes()
     
     def request_callsign(self, callsign):
         callsign_to_print = callsign.upper()
@@ -43,6 +45,8 @@ class CallsignRequester:
             return "TEST"
         if callsign_to_print.lower() == "purge":
             return "PURGE"
+        if callsign_to_print.lower() == "times":
+            return "TIME"
 
         #What are we doing with this? Depends on what position the guy is working, maybe?
         #If they're NOT working Ground or Local, they shouldn't be scanning strips.

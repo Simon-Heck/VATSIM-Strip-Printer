@@ -13,23 +13,37 @@ __author__ = "Simon Heck"
 
 class Main():
     def __init__(self) -> None:
-        
-        acft_json = "./data/acft_database.json"
-        airports = "./data/airports.json"
-        printerpositions = "./data/positions.json"
+        acft_json_path = "./data/acft_database.json"
+        airports_path = "./data/airports.json"
+        printerpositions_path = "./data/positions.json"
 
         json_url = "https://data.vatsim.net/v3/vatsim-data.json"
         sigmetJSON = "https://beta.aviationweather.gov/cgi-bin/data/airsigmet.php?format=json"
         cwasJSON = "https://api.weather.gov/aviation/cwsus/"
        
         cached_callsign_path = "./data/cached_departures_that_have_been_printed"
-        # Full path used for debugging
-        # cached_callsign_path = "C:\\Users\\simon\\OneDrive\\Documents\\Coding Projects\\strip-data-collector\\src\\cached_departures_that_have_been_printed"
-        
-        # departure_airport = "KATL"
-        control_area = ""        
-        printed_callsigns = []
+
         # TODO: Handle empty pickle file
+
+
+        #7/3 BEGIN
+        
+        # ----Open Printer Positions----
+        printer_positions_file = open(printerpositions_path, 'rb')
+        printer_positions = json.load(printer_positions_file)
+        printer_positions_file.close()
+
+        # ---Open Airports File-----
+        airfields_file = open(airports_path, 'rb')
+        airports = json.load(airfields_file)
+        airfields_file.close()
+        
+        # ---Open Aircraft File-----
+        acft_file = open(acft_json_path, 'rb')
+        acft_dict = json.load(acft_file)
+        acft_file.close()
+
+        #7/3 END
 
         try:
             printed_callsign_file = open(cached_callsign_path, "rb")
@@ -41,41 +55,48 @@ class Main():
         printed_callsign_file.close()
 
         print_all_departures = False
-        while(True):
-            #Load facility choices from positions.json
-            print("Initializing setup...")
-            print("Please select your control facility. Your choices are:")
-            facilities = (json.load(open(printerpositions)))["facilities"]
-            for i in facilities:
-                print(i)
-            facility = input()
-            facility = str(facility.upper())
-            try:
-                facility = facilities[facility]
-            except:
-                printerfacilitydefault = tuple((facilities.items()))
-                print("I'm sorry, I can't seem to find " + facility + ". Setting your facility to " + str(printerfacilitydefault[0][0]) + ", the default facility.")
-                facility = facilities[printerfacilitydefault[0][0]]
+        control_area = ""
+        printed_callsigns = []
 
-            #Load position choices.
-            control_area = tuple((facility.items()))[0] #If this isn't here... it causes the datacollector to silently error ?
-            if len(facility) > 1:
-                print("Please select your control position.")
-                print("Your choices include:")
-                for i in facility:
-                    print(i)
-                position = input()
-                position = position.upper()
-                try:
-                    control_area = facility[position]
-                except:
-                    printerpositiondefault = tuple((facility.items()))
-                    print("I'm sorry, I can't seem to find " + position + ". Setting your position to " + str(printerpositiondefault[0][0]) + ", the default position.")
-                    control_area = facility[printerpositiondefault[0][0]]
-            else:
-                print(f"Setting your position to {control_area[0]}.")
-                printerpositiondefault = tuple((facility.items()))
-                control_area = facility[printerpositiondefault[0][0]]
+        # TODO move this to it's own class
+        print("Initializing setup...")
+
+        # ---------Choose Facilty---------------
+        print("Please select your control facility. Your choices are:")
+        facilities = printer_positions["facilities"]
+        for i in facilities:
+            print(i)
+        user_facility = input()
+        user_facility = str(user_facility.upper())
+        try:
+            user_facility = facilities[user_facility]
+        except:
+            printerfacilitydefault = tuple((facilities.items()))
+            print("I'm sorry, I can't seem to find " + user_facility + ". Setting your facility to " + str(printerfacilitydefault[0][0]) + ", the default facility.")
+            user_facility = facilities[printerfacilitydefault[0][0]]
+
+        # -------Choose Position in Facility---------
+        control_area = tuple((user_facility.items()))[0] #If this isn't here... it causes the datacollector to silently error ?
+        if len(user_facility) > 1:
+            print("Please select your control position.")
+            print("Your choices include:")
+            for i in user_facility:
+                print(i)
+            user_position = input()
+            user_position = user_position.upper()
+            try:
+                control_area = user_facility[user_position]
+            except:
+                printerpositiondefault = tuple((user_facility.items()))
+                print("I'm sorry, I can't seem to find " + user_position + ". Setting your position to " + str(printerpositiondefault[0][0]) + ", the default position.")
+                control_area = user_facility[printerpositiondefault[0][0]]
+        else:
+            print(f"Setting your position to {control_area[0]}.")
+            printerpositiondefault = tuple((user_facility.items()))
+            control_area = user_facility[printerpositiondefault[0][0]]
+
+        # -----Print all Departures-----
+        while(True):
             try:
                 if control_area['auto_Print_Strips']: #If the position is configured to NOT auto-print strips... these settings are useless... so might as well skip 'em.
                     response = input("Do you want to print all departures on the ground? Reply with a '1' for yes, '0' for no: ")
@@ -91,7 +112,6 @@ class Main():
                     if(clear_cache):
                         # pickles an empty list into the cached file
                         clear_callsigns = ClearStoredCallsigns(cached_callsign_path)
-                    
                 break
             except ValueError:
                 print("Please input either a 1 or 0....IDIOT")
@@ -100,9 +120,9 @@ class Main():
         # if not print_cached_departures:
         printed_callsigns = current_callsigns_cached
         
-        printer = Printer(acft_json) 
-        data_collector = DataCollector(json_url, control_area, printer, printed_callsigns, cached_callsign_path)
-        efsts = Scanner(control_area, sigmetJSON, printerpositions, airports, data_collector)
+        printer = Printer(acft_dict) 
+        data_collector = DataCollector(json_url, control_area, printer, printed_callsigns, cached_callsign_path, printer_positions, airports)
+        efsts = Scanner(control_area, sigmetJSON, printer_positions, airports, data_collector)
         callsign_requester = CallsignRequester(printer, data_collector, control_area, efsts)
         json_refresh = JSONRefreshTimer(data_collector)
         wx_refresh = WXRadio(control_area, printer, airports, sigmetJSON, cwasJSON)
