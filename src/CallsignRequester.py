@@ -28,6 +28,8 @@ class CallsignRequester:
                 self.scan.scan(callsign_to_print)
             elif flag == "TEST":
                 self.printer.print_memoryAids()
+            elif flag == "PURGE":
+                self.scan.purgeQueue()
     
     def request_callsign(self, callsign):
         callsign_to_print = callsign.upper()
@@ -39,6 +41,8 @@ class CallsignRequester:
         #Detect if this is to print memory aids
         if callsign_to_print.lower() == "memoryaids":
             return "TEST"
+        if callsign_to_print.lower() == "purge":
+            return "PURGE"
 
         #What are we doing with this? Depends on what position the guy is working, maybe?
         #If they're NOT working Ground or Local, they shouldn't be scanning strips.

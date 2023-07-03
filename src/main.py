@@ -100,9 +100,9 @@ class Main():
         # if not print_cached_departures:
         printed_callsigns = current_callsigns_cached
         
-        efsts = Scanner(control_area, sigmetJSON, printerpositions, airports)
         printer = Printer(acft_json) 
         data_collector = DataCollector(json_url, control_area, printer, printed_callsigns, cached_callsign_path)
+        efsts = Scanner(control_area, sigmetJSON, printerpositions, airports, data_collector)
         callsign_requester = CallsignRequester(printer, data_collector, control_area, efsts)
         json_refresh = JSONRefreshTimer(data_collector)
         wx_refresh = WXRadio(control_area, printer, airports, sigmetJSON, cwasJSON)
