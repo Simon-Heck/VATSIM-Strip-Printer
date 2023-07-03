@@ -7,6 +7,7 @@ from ClearStoredCallsigns import ClearStoredCallsigns
 import pickle
 import json
 from HazardousWX import WXRadio
+from EFSTS import Scanner
 
 __author__ = "Simon Heck"
 
@@ -99,11 +100,17 @@ class Main():
         # if not print_cached_departures:
         printed_callsigns = current_callsigns_cached
         
+        efsts = Scanner(control_area, sigmetJSON, printerpositions, airports)
         printer = Printer(acft_json) 
         data_collector = DataCollector(json_url, control_area, printer, printed_callsigns, cached_callsign_path)
-        callsign_requester = CallsignRequester(printer, data_collector, control_area)
+        callsign_requester = CallsignRequester(printer, data_collector, control_area, efsts)
         json_refresh = JSONRefreshTimer(data_collector)
         wx_refresh = WXRadio(control_area, printer, airports, sigmetJSON, cwasJSON)
+
+
+        #EXPERIMENTAL
+        
+
 
         # initial data grab
         data_collector.check_for_updates()
@@ -116,6 +123,9 @@ class Main():
         automated_strip_printing = threading.Thread(target=data_collector.scan_for_new_aircraft_automatic)
         # Thread4: automatically print SIGMETs/AIRMETs every once in a while.
         wxradio = threading.Thread(target=wx_refresh.start_refreshing)
+
+        #Experimental / Thread5
+        scans = threading.Thread(target=efsts.opsNet)
 
 
         print("Would you like Hazardous Weather Advisories?")
@@ -139,6 +149,9 @@ class Main():
         user_input.start()
         if enablewxradio:
             wxradio.start()
+
+        if control_area['type'] == "GC" or control_area['type'] == "LC":
+            scans.start()
 
 
 if __name__ == "__main__":

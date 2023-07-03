@@ -1,15 +1,18 @@
 from Printer import Printer
 from DataCollector import DataCollector
 import time
+from EFSTS import Scanner
 
 __author__ = "Simon Heck"
 
 class CallsignRequester:
     control_area = "A80ALL" # Set A80ALL as the control area in case theres some failure, lol.
-    def __init__(self, printer: Printer, data_collector: DataCollector, control_area) -> None:
+    def __init__(self, printer: Printer, data_collector: DataCollector, control_area, scanner: Scanner) -> None:
         self.printer = printer
         self.data_collector = data_collector
         self.control_area = control_area
+        self.scan = scanner
+
     def request_callsign_from_user(self) -> str:
         time.sleep(0.5)
         while(True):
@@ -22,7 +25,7 @@ class CallsignRequester:
             if flag == "Print":
                 self.request_callsign(callsign_to_print)
             elif flag == "Scan":
-                print("SCAN STRIP!")
+                self.scan.scan(callsign_to_print)
             elif flag == "TEST":
                 self.printer.print_memoryAids()
     
@@ -32,6 +35,7 @@ class CallsignRequester:
 
     def determineFlag(self,callsign_to_print):
         flag = "Print"
+        Visual = False
         #Detect if this is to print memory aids
         if callsign_to_print.lower() == "memoryaids":
             return "TEST"
@@ -44,6 +48,7 @@ class CallsignRequester:
             if len(callsign_to_print) < 6: #If the callsign is less than 6 characters, it can NOT be a CID. Therefore, we're printing a flight strip.    
                 return "Print"               
             elif (callsign_to_print.upper().replace("V","",1)).isnumeric(): #We're checking to see if the callsign starts with a "V" to indicate "visual separation".
+                #TODO: Add functionality to detect if visual separation is being applied.
                 return "Scan"
             elif callsign_to_print.isalnum(): #If the callsign has numbers AND letters, it can NOT be a CID. Therefore, we're printing a flight strip.
                 return "Print"
