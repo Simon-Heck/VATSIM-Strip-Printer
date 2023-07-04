@@ -7,12 +7,12 @@ from DataCollector import DataCollector
 
 
 #OK so this needs to do a couple of things
-# Number onely, it needs to SCAN when airplanes come IN and LOG that time.
-# TWOsely, it needs to SCAN when airplanes go OUT and log THAT time. Calculate the time between.
-# We could have a discord bot that alerts us when delays reach 15 minutes & a "DROP" command for people who disconnect or whatevs. 
-# Or it could "scan" to see if they're still connected and auto-drop that way.
+# Number onely, it needs to SCAN when airplanes come IN and LOG that time. [Done]
+# TWOsely, it needs to SCAN when airplanes go OUT and log THAT time. Calculate the time between. [Done]
+# We could have a discord bot that alerts us when delays reach 15 minutes & a "DROP" command for people who disconnect or whatevs.  [Done]
+# Or it could "scan" to see if they're still connected and auto-drop that way. [Also done]
 
-# 3, when local scans flight strip, it needs to transmit that data (plus visual/not visual) to a80 AND check to see if theres a timer running for the aircraft. 
+# 3, when local scans flight strip, it needs to transmit that data (plus visual/not visual) to a80 AND check to see if theres a timer running for the aircraft.  [Half done]
 # if so, stop that timer and see what the delay is.
 
 ###
@@ -94,9 +94,9 @@ class Scanner:
             time.sleep(15)
             #Get the latest JSON File. We'll use this to see if a departure disconnected - if they did, we'll purge them from the list.
             acftList = self.data_collector.get_json()
-            yourmom = set()
+            connectedAircraft = set()
             for x in acftList['pilots']:
-                yourmom.add(x['cid'])
+                connectedAircraft.add(x['cid'])
 
             totalDelay = []
 
@@ -107,7 +107,7 @@ class Scanner:
                 aircraftDelay = math.floor(aircraftDelay)
                 
                 #Check to see if the aircraft is even still connected. If its not, purge the callsign.
-                if int(aircraft) in yourmom:
+                if int(aircraft) in connectedAircraft:
                     totalDelay.append(aircraftDelay)
                 else:
                     self.queue.pop(aircraft)
@@ -156,7 +156,11 @@ class Scanner:
         chargeClass = {"LOCIGS":"Low Ceilings","TSTORMS":"Thunderstorms","TSTORMS":"Thunderstorms","WIND":"Wind","LOVIS":"Low Visibility","FOG":"Fog","SNO":"Snow/Ice","TOR":"Tornado/Hurricane","BRAKING":"Poor/Nil Braking Action","RAIN":"Rain","RWY":"Runway","LTG":"Lightning Strike","FAA":"FAA (STARS/ERAM)","NOFAA":"Non-FAA","RWYCHG":"Runway Change - Operational Advantage","NOISE":"Noise Abatement","DISABLED AC":"Disabled Aircraft","COMPACT":"Compacted Demand","MULTI":"Multi-Taxi","VOL":"Volume","":"Airshow","EMER":"Aircraft Emergency","RDO":"Aircraft Radio","MIKE":"Aircraft Stuck Mike","BIRDS":"Bird Strike","FIRE":"Fire","FLC":"Flight Check","MIL":"Military Operations","PRM":"Precision Runway Monitor (PRM) non-equipage","LAHSO":"Aircraft/Pilot unable to perform land and hold short operations (LAHSO)","SEC":"Security","VIP":"VIP Movement","LUAW":"Line Up And Wait","OTHER":"Other"}
 
         aeroport = self.control_area['airports'][0]
-        content = {"content":f"""D/D from {aeroport}, {status}{value} due to {cause}.
+        logDay = '{:0>2}'.format(time.gmtime().tm_mday)
+        logHour = '{:0>2}'.format(time.gmtime().tm_hour)
+        logMin = '{:0>2}'.format(time.gmtime().tm_min)
+        logTime = f'{logDay}/{logHour}{logMin}'
+        content = {"content":f"""{logTime}   D/D from {aeroport}, {status}{value} due to {cause}.
         There are departure delays from **{self.airports['airfields'][aeroport]['NAME']}** of {rangeTime} ({longStatus}) due to {chargeCategory[charge[0]]}:{chargeClass[charge[1]]}."""}
        # content = {"content":"help","embeds":[{"title":"ATL Departure Delays"},"footer":{}]}
         #status = up or down
@@ -187,7 +191,7 @@ class Scanner:
         #Assign a cause.
         if wxCharge is not False:
             return f"WX:{wxCharge}"
-        elif self.sigmets is not None:
+        elif len(self.sigmets) > 0:
             return "WX:TSTORMS"
         elif volumeCharge:
             return "VOL:VOL"

@@ -72,7 +72,7 @@ class Main():
             user_facility = facilities[user_facility]
         except:
             printerfacilitydefault = tuple((facilities.items()))
-            print("I'm sorry, I can't seem to find " + user_facility + ". Setting your facility to " + str(printerfacilitydefault[0][0]) + ", the default facility.")
+            print(f"I'm sorry, I can't seem to find {user_facility}. Setting your facility to{str(printerfacilitydefault[0][0])}, the default facility.")
             user_facility = facilities[printerfacilitydefault[0][0]]
 
         # -------Choose Position in Facility---------
@@ -88,7 +88,7 @@ class Main():
                 control_area = user_facility[user_position]
             except:
                 printerpositiondefault = tuple((user_facility.items()))
-                print("I'm sorry, I can't seem to find " + user_position + ". Setting your position to " + str(printerpositiondefault[0][0]) + ", the default position.")
+                print(f"I'm sorry, I can't seem to find {user_position}. Setting your position to {str(printerpositiondefault[0][0])}, the default position.")
                 control_area = user_facility[printerpositiondefault[0][0]]
         else:
             print(f"Setting your position to {control_area[0]}.")
@@ -128,10 +128,6 @@ class Main():
         wx_refresh = WXRadio(control_area, printer, airports, sigmetJSON, cwasJSON)
 
 
-        #EXPERIMENTAL
-        
-
-
         # initial data grab
         data_collector.check_for_updates()
 
@@ -143,8 +139,7 @@ class Main():
         automated_strip_printing = threading.Thread(target=data_collector.scan_for_new_aircraft_automatic)
         # Thread4: automatically print SIGMETs/AIRMETs every once in a while.
         wxradio = threading.Thread(target=wx_refresh.start_refreshing)
-
-        #Experimental / Thread5
+        # Thread5: Keep track of departure delays. Manage strip scanners.
         scans = threading.Thread(target=efsts.opsNet)
 
 
@@ -163,7 +158,6 @@ class Main():
         except:
             print("Sorry, I'm not sure I understand. Skipping data sync.")
 
-
         # start other threads
         JSON_timer.start()
         user_input.start()
@@ -172,7 +166,6 @@ class Main():
 
         if control_area['type'] == "GC" or control_area['type'] == "LC":
             scans.start()
-
 
 if __name__ == "__main__":
    main = Main()

@@ -43,7 +43,7 @@ class Printer:
             cid = ""
             if control_area['hasBarcode']: #If it should have the barcode, format it here.
                 cid = f"^FO110,1340^BCB,70,N,N,N,A^FD{callsign_data['cid']}"
-            exit_fix = self.match_ATL_exit_fix(callsign_data['flight_plan']['route'])
+            exit_fix = self.match_ATL_exit_fix(flightplan)
             computer_id = self.generate_id(callsign_data['flight_plan']['remarks'])
             amendment_number = str(int(callsign_data['flight_plan']['revision_id'])-1)
             if amendment_number == '0':
@@ -163,6 +163,10 @@ class Printer:
         if "dct" in flightplan_list:
             flightplan_list.remove("dct")
         
+        #If the departure airport is filed in the flight plan, remove it.
+        if flightplan_list[0] == departure:
+            flightplan_list.pop(0)
+        
         # removes simbrief crap at start of flightplan
         i=0
         while(i < len(flightplan_list)):
@@ -179,7 +183,7 @@ class Printer:
                 return  f"+{departure} {build_string}+"
             elif i >= 3:
                 build_string = build_string.strip()
-                return f"{departure} {build_string}./."
+                return f"{departure} {build_string}. / ."
             
             build_string = f"{build_string}{flightplan_list[i]} "
         build_string = f'{departure} {build_string}'
@@ -230,6 +234,7 @@ class Printer:
         modified_flightplan = flightplan
         modified_flightplan = self.remove_amendment_marking(modified_flightplan)
         modified_flightplan = modified_flightplan.strip()
+        modified_flightplan = modified_flightplan[5:]
 
         flightplan_list = modified_flightplan.split(" ")
         if len(flightplan_list) > 0:
@@ -237,6 +242,7 @@ class Printer:
         if exit_fix is None:
             exit_fix = ""
         return exit_fix
+    
     def generate_id(self, remarks:str):
         lower_remarks = remarks.lower()
         r1 = str(random.randint(0,9))
@@ -261,7 +267,6 @@ class Printer:
         return f"{r1}{r2}{r3}"
 
     def format_actype(self, aircraft_description:str):
-        
         #Format that stuff & send it back
         aircraft_description = aircraft_description.replace("H/","")
         aircraft_description = aircraft_description.replace("J/","")
