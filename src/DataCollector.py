@@ -73,11 +73,11 @@ class DataCollector:
 
         #create fence
         #KATL NW Lat_Long point
-        northern_latitude = airports_dict.get(departure)["LAT"] + fence[control_area["type"]]
-        western_longitude = airports_dict.get(departure)["LON"] - fence[control_area["type"]]
+        northern_latitude = airports_dict['airfields'][departure]["LAT"] + fence[control_area["type"]]
+        western_longitude = airports_dict['airfields'][departure]["LON"] - fence[control_area["type"]]
         #KATL SE Lat_long point
-        southern_latitude = airports_dict.get(departure)["LAT"] - fence[control_area["type"]]
-        eastern_longitude = airports_dict.get(departure)["LON"] + fence[control_area["type"]]
+        southern_latitude = airports_dict['airfields'][departure]["LAT"] - fence[control_area["type"]]
+        eastern_longitude = airports_dict['airfields'][departure]["LON"] + fence[control_area["type"]]
 
         # airplane lat_long position
         airplane_lat, airplane_long = airplane_lat_long
