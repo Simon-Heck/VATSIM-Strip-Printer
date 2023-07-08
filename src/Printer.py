@@ -22,7 +22,7 @@ class Printer:
         
         # callsign_data = self.data_collector.get_callsign_data(requested_callsign)
         if requested_callsign == "" or None:
-            # print("blank")
+            print("blank")
             # print blank strip
             self.zebra.output(f"^XA^CWK,E:FLIGHTPROGRESSSTRIP.TTF^XZ^XA^AKN,50,70^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FO0,1297^GB203,4,4^FS^FO0,972^GB203,4,4^FS^FO0,363^GB203,4,4^FS^FO0,242^GB203,4,4^FS^FO0,120^GB203,4,4^FS^FO66,0^GB4,365,4^FS^FO133,0^GB4,365,4^FS^FO133,1177^GB4,122,4^FS^FO66,1177^GB4,122,4^FS^FB140,1,0,L^FO5,1470^FD^AKb,35,35^FS^FB200,1,0,L^FO60,1400^FD^AKb,35,35^FS^FO130,1530^FD^FS^FB200,1,0,R^FO45,1320^FD^AKb,80,80^FS^FO5,1200^FD^AKb,35,35^FS^FO80,1190^FD^AKb,35,35^FS^FO145,1220^FD^AKb,35,35^FS^FO5,1050^FD^AKb,35,35^FS^FB500,1,0,L^FO5,450^FD^AKb,35,35^FS^FB500,1,0,L^FO70,450^FD^AKb,35,35^FS^^FB500,1,0,L^FO135,450^FD^AKb,35,35^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ")
 
@@ -39,11 +39,10 @@ class Printer:
             remarks=callsign_data['flight_plan']['remarks']
             remarks = self.format_remarks(callsign_data['flight_plan']['remarks'])
             enroute_time = callsign_data['flight_plan']['enroute_time']
-            cid = f"^FO110,1340^BCB,70,N,N,N,A^FD{callsign_data['cid']}" #Format barcode here...
-            # cid = callsign_data['cid']
-            if control_area != "KATL": #purge barcode if not ATL clearance
-                cid = ""
-            exit_fix = self.match_ATL_exit_fix(callsign_data['flight_plan']['route'])
+            cid = ""
+            if control_area['hasBarcode']: #If it should have the barcode, format it here.
+                cid = f"^FO110,1340^BCB,70,N,N,N,A^FD{callsign_data['cid']}"
+            exit_fix = self.match_ATL_exit_fix(flightplan)
             computer_id = self.generate_id(callsign_data['flight_plan']['remarks'])
             amendment_number = str(int(callsign_data['flight_plan']['revision_id'])-1)
             if amendment_number == '0':
@@ -91,8 +90,16 @@ class Printer:
                           ^AKb,35,35^FS^FO0,1175^GB203,4,4^FS^PQ1,0,1,Y^XZ""")
 
     def print_gi_messages(self, message):
-        # print(f"GI {message}")
-        self.zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FS^FB1590,4,3,L,25^FO0,10^FDGI {message}^A0b,40,40^XZ")
+        print(f"{message}")
+        # self.zebra.output(f"^XA^CFC,40,40~TA000~JSN^LT0^MNN^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW203^LL1624^LS-20^FS^FB1590,4,3,L,25^FO0,10^FD{message}^A0b,40,40^XZ")
+
+    def print_memoryAids(self):
+        print("STOP")
+        print("\\\\\\ NO LUAW ///")
+        print("S/E SLAWW/FUTBL")
+        print("W/N SNUFY/MPASS")
+        print("S/E GRITZ/LIDAS")
+        print("W/N HRSHL/RONII")
 
     def remove_amendment_marking(self, route:str) -> str:
         route = route.replace("+", "")
@@ -115,7 +122,11 @@ class Printer:
             return ""
         
         # Split remark text into two sections and takes the data in the second half. Essentially deletes PBN data from the text. If no RMK/ exits, it will just use the first 18 characters
-        string_list = remark_string.split("RMK/")
+        if "RMK/" in remark_string:
+            string_list = remark_string.split("RMK/")
+        else:
+            string_list = remark_string
+
         if len(string_list) > 1:
             ret_string = f"{string_list[1][:18]}"
         else:
@@ -149,6 +160,10 @@ class Printer:
         if "dct" in flightplan_list:
             flightplan_list.remove("dct")
         
+        #If the departure airport is filed in the flight plan, remove it.
+        if flightplan_list[0] == departure:
+            flightplan_list.pop(0)
+        
         # removes simbrief crap at start of flightplan
         i=0
         while(i < len(flightplan_list)):
@@ -165,7 +180,7 @@ class Printer:
                 return  f"+{departure} {build_string}+"
             elif i >= 3:
                 build_string = build_string.strip()
-                return f"{departure} {build_string}./."
+                return f"{departure} {build_string}. / ."
             
             build_string = f"{build_string}{flightplan_list[i]} "
         build_string = f'{departure} {build_string}'
@@ -216,6 +231,7 @@ class Printer:
         modified_flightplan = flightplan
         modified_flightplan = self.remove_amendment_marking(modified_flightplan)
         modified_flightplan = modified_flightplan.strip()
+        modified_flightplan = modified_flightplan[5:]
 
         flightplan_list = modified_flightplan.split(" ")
         if len(flightplan_list) > 0:
@@ -223,6 +239,7 @@ class Printer:
         if exit_fix is None:
             exit_fix = ""
         return exit_fix
+    
     def generate_id(self, remarks:str):
         lower_remarks = remarks.lower()
         r1 = str(random.randint(0,9))
@@ -247,7 +264,6 @@ class Printer:
         return f"{r1}{r2}{r3}"
 
     def format_actype(self, aircraft_description:str):
-        
         #Format that stuff & send it back
         aircraft_description = aircraft_description.replace("H/","")
         aircraft_description = aircraft_description.replace("J/","")
