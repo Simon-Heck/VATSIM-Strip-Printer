@@ -1,6 +1,7 @@
 Version: Python 3.11.3
 # Overview:
-  * WIP flight progress strips for [vZTL](https://ztlartcc.org), on the [VATSIM Network](https://vatsim.net).
+
+  * WIP flight progress strips for [vZTL](https://ztlartcc.org), on the [VATSIM Network](https://vatsim.net). Independent project not sponsered by VATSIM
   * Code Author: Simon Heck [(Simon-Heck)](https://github.com/Simon-Heck)
   * Printer Technician: Joey Costello [(JoeyTheDev1)](https://github.com/JoeyTheDev1/)
   * Technical Advisor: Zack B)
