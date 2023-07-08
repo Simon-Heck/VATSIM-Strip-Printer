@@ -7,11 +7,12 @@ __author__ = "Simon Heck"
 
 class CallsignRequester:
     control_area = "A80ALL" # Set A80ALL as the control area in case theres some failure, lol.
-    def __init__(self, printer: Printer, data_collector: DataCollector, control_area, scanner: Scanner) -> None:
+    def __init__(self, printer: Printer, data_collector: DataCollector, control_area) -> None:
+                #  , scanner: Scanner) 
         self.printer = printer
         self.data_collector = data_collector
         self.control_area = control_area
-        self.scan = scanner
+        # self.scan = scanner
 
     def request_callsign_from_user(self) -> str:
         time.sleep(0.5)

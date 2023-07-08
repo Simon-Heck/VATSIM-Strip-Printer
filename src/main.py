@@ -17,8 +17,8 @@ class Main():
         # Full path used for debugging
         # acft_json_path = "./data/acft_database.json"
         acft_json_path = "C:/Users/simon/OneDrive/Documents/Coding_Projects/strip-data-collector/src/data/airports.json"
-        # airports = "./data/airports.json"
-        airports = "C:/Users/simon/OneDrive/Documents/Coding_Projects/strip-data-collector/src/data/airports.json"
+        # airports_path = "./data/airports.json"
+        airports_path = "C:/Users/simon/OneDrive/Documents/Coding_Projects/strip-data-collector/src/data/airports.json"
         # printer_positions = "./data/positions.json"
         printer_positions = "C:/Users/simon/OneDrive/Documents/Coding_Projects/strip-data-collector/src/data/positions.json"
         # cached_callsign_path = "./data/cached_departures_that_have_been_printed"
@@ -62,10 +62,10 @@ class Main():
         # printer_positions = json.load(printer_positions_file)
         # printer_positions_file.close()
 
-        # # ---Open Airports File-----
-        # airfields_file = open(airports_path, 'rb')
-        # airports = json.load(airfields_file)
-        # airfields_file.close()
+        # ---Open Airports File-----
+        airfields_file = open(airports_path, 'rb')
+        airports = json.load(airfields_file)
+        airfields_file.close()
         
         # # ---Open Aircraft File-----
         # acft_file = open(acft_json_path, 'rb')
@@ -149,8 +149,9 @@ class Main():
         
         printer = Printer(aircraft_dict) 
         data_collector = DataCollector(json_url, control_area, printer, printed_callsigns, cached_callsign_path, printer_positions, airports)
-        efsts = Scanner(control_area, sigmetJSON, printer_positions, airports, data_collector)
-        callsign_requester = CallsignRequester(printer, data_collector, control_area, efsts)
+        # efsts = Scanner(control_area, sigmetJSON, printer_positions, airports, data_collector)
+        callsign_requester = CallsignRequester(printer, data_collector, control_area)
+                                            #    , efsts)
         json_refresh = JSONRefreshTimer(data_collector)
         wx_refresh = WXRadio(control_area, printer, airports, sigmetJSON, cwasJSON)
 
