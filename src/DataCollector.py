@@ -14,7 +14,8 @@ class DataCollector:
         self.printed_callsigns = cached_printed_departures
         self.cached_departures_file_path = cached_departures_file_path
         # TODO Load from saved JSON File
-        self.control_area_dict = positions
+        self.control_area_dict = positions['facilities']
+        self.fence = positions['fence_data']
         self.airports = airports
 
     def check_for_updates(self):
@@ -31,9 +32,8 @@ class DataCollector:
         new_pilot_route:str = new_pilot_data_associated_with_callsign['flight_plan']['route']
         if '+' in new_pilot_route:
             new_pilot_route = new_pilot_route.replace('+', '')
-
+        
         if pilot_callsign in self.callsign_list:
-           
             current_pilot_route:str = self.callsign_list[pilot_callsign]['flight_plan']['route']
             if '+' in current_pilot_route:
                 current_pilot_route = current_pilot_route.replace('+', '')
@@ -47,8 +47,7 @@ class DataCollector:
             self.callsign_list[pilot_callsign] = new_pilot_data_associated_with_callsign
 
     def scan_for_new_aircraft_automatic(self):
-        
-        while(True):
+        while(self.control_area['auto_Print_Strips']): #This used to be while(True)
             callsign_table = self.get_callsign_list()
             # TODO, lock callsign list to leep them synced
             for callsign_to_print in callsign_table:
@@ -67,17 +66,16 @@ class DataCollector:
         else:
             return self.callsign_list.get(callsign)
     
-    def in_geographical_region_wip(self, control_area:str, departure:str, airplane_lat_long:tuple) -> bool:
-        fence = {"CD":.026079,"TAR":1,"COMBINED":1}
-        airports_dict = self.airports
+    def in_geographical_region_wip(self, control_area:str, airport:str, airplane_lat_long:tuple) -> bool:
+        airports_dict = self.airports['airfields']
 
         #create fence
-        #KATL NW Lat_Long point
-        northern_latitude = airports_dict['airfields'][departure]["LAT"] + fence[control_area["type"]]
-        western_longitude = airports_dict['airfields'][departure]["LON"] - fence[control_area["type"]]
-        #KATL SE Lat_long point
-        southern_latitude = airports_dict['airfields'][departure]["LAT"] - fence[control_area["type"]]
-        eastern_longitude = airports_dict['airfields'][departure]["LON"] + fence[control_area["type"]]
+        #Airport NW Lat_Long point
+        northern_latitude = airports_dict.get(airport)["LAT"] + self.fence[control_area["type"]]
+        western_longitude = airports_dict.get(airport)["LON"] - self.fence[control_area["type"]]
+        #Airport SE Lat_long point
+        southern_latitude = airports_dict.get(airport)["LAT"] - self.fence[control_area["type"]]
+        eastern_longitude = airports_dict.get(airport)["LON"] + self.fence[control_area["type"]]
 
         # airplane lat_long position
         airplane_lat, airplane_long = airplane_lat_long

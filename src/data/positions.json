@@ -1,12 +1,15 @@
 {"facilities":{
-    "ATL":{ "ATL-CD":{"airports":["KATL"],"type":"CD"},
-            "ATL-GCN":{"airports":["KATL"],"type":"GC"},
-            "ATL-LC2":{"airports":["KATL"],"type":"LC"}},
-    "A80":{ "A80-ALL":{"airports":["KATL", "KPDK", "KAHN", "KFTY", "KRYY", "KMGE", "KLZU", "KMCN", "KWRB", "KCSG", "KLSF", "KVPC", "KPUJ", "20GA", "KCCO", "KFFC", "KHMP", "6A2", "7GA7", "KCVC", "GA80", "KCNI", "KCTJ", "KGVL", "KJCA", "KWDR", "D73", "52A", "KCPP", "KMLJ", "KOKZ", "KDBN", "KSBO", "KEZM", "48A", "KPXE", "KMAC", "51A", "53A", "KACJ", "6A1", "KOPN", "KPIM", "KLGC", "7A3", "KAUO", "06A", "07A", "KEUF", "4GA5", "5A9"],"type":"COMBINED"},
-            "A80-SAT":{"airports":["KPDK", "KAHN", "KFTY", "KRYY", "KMGE", "KLZU", "KMCN", "KWRB", "KCSG", "KLSF", "KVPC", "KPUJ", "20GA", "KCCO", "KFFC", "KHMP", "6A2", "7GA7", "KCVC", "GA80", "KCNI", "KCTJ", "KGVL", "KJCA", "KWDR", "D73", "52A", "KCPP", "KMLJ", "KOKZ", "KDBN", "KSBO", "KEZM", "48A", "KPXE", "KMAC", "51A", "53A", "KACJ", "6A1", "KOPN", "KPIM", "KLGC", "7A3", "KAUO", "06A", "07A", "KEUF", "4GA5", "5A9"],"type":"COMBINED"},
-            "A80-DR":{"airports":["KATL"],"type":"DR"},
-            "A80-TAR":{"airports":["KATL"],"type":"TAR"}},
-    "ZTL":{ "ZTL-FD":{"airports":["KATL", "KCLT", "KPDK", "KAHN", "KFTY", "KRYY", "KMGE", "KLZU", "KMCN", "KWRB", "KCSG", "KLSF", "KAGS", "KAVL", "KBHM", "KTCL", "KCHA", "KGSO", "KINT", "KGSP", "KGMU", "KGYH", "KHKY", "KJQF", "KVUJ", "KMGM", "KMXF", "KTRI", "KTYS"],"type":"COMBINED"}},
-    "PAO":{ "PAO-CD":{"airports":["KPAO"],"type":"CD"}},
-    "DEN":{ "DEN-CD":{"airports":["KDEN"],"type":"CD"}}
-}}
+    "ATL":{ "ATL-CD":{"airports":["KATL"],"type":"CD","auto_Print_Strips":true,"hasBarcode":true,"stripType":"departure"},
+            "ATL-GCN":{"airports":["KATL"],"type":"GC","auto_Print_Strips":false,"hasBarcode":true,"stripType":"departure"},
+            "ATL-LC2":{"airports":["KATL"],"type":"LC","auto_Print_Strips":false,"hasBarcode":true,"stripType":"departure"}},
+    "A80":{ "A80-ALL":{"airports":["KATL", "KPDK", "KAHN", "KFTY", "KRYY", "KMGE", "KLZU", "KMCN", "KWRB", "KCSG", "KLSF", "KVPC", "KPUJ", "20GA", "KCCO", "KFFC", "KHMP", "6A2", "7GA7", "KCVC", "GA80", "KCNI", "KCTJ", "KGVL", "KJCA", "KWDR", "D73", "52A", "KCPP", "KMLJ", "KOKZ", "KDBN", "KSBO", "KEZM", "48A", "KPXE", "KMAC", "51A", "53A", "KACJ", "6A1", "KOPN", "KPIM", "KLGC", "7A3", "KAUO", "06A", "07A", "KEUF", "4GA5", "5A9"],"type":"COMBINED","auto_Print_Strips":true,"hasBarcode":false,"stripType":"both"},
+            "A80-SAT":{"airports":["KPDK", "KAHN", "KFTY", "KRYY", "KMGE", "KLZU", "KMCN", "KWRB", "KCSG", "KLSF", "KVPC", "KPUJ", "20GA", "KCCO", "KFFC", "KHMP", "6A2", "7GA7", "KCVC", "GA80", "KCNI", "KCTJ", "KGVL", "KJCA", "KWDR", "D73", "52A", "KCPP", "KMLJ", "KOKZ", "KDBN", "KSBO", "KEZM", "48A", "KPXE", "KMAC", "51A", "53A", "KACJ", "6A1", "KOPN", "KPIM", "KLGC", "7A3", "KAUO", "06A", "07A", "KEUF", "4GA5", "5A9"],"type":"COMBINED","auto_Print_Strips":true,"hasBarcode":false,"stripType":"departure"},
+            "A80-DR":{"airports":["KATL"],"type":"DR","auto_Print_Strips":false,"hasBarcode":false,"stripType":"departure"},
+            "A80-TAR":{"airports":["KATL"],"type":"TAR","auto_Print_Strips":true,"hasBarcode":false,"stripType":"arrival"}},
+    "ZTL":{ "ZTL-FD":{"airports":["KATL", "KCLT", "KPDK", "KAHN", "KFTY", "KRYY", "KMGE", "KLZU", "KMCN", "KWRB", "KCSG", "KLSF", "KAGS", "KAVL", "KBHM", "KTCL", "KCHA", "KGSO", "KINT", "KGSP", "KGMU", "KGYH", "KHKY", "KJQF", "KVUJ", "KMGM", "KMXF", "KTRI", "KTYS"],"type":"COMBINED","auto_Print_Strips":true,"hasBarcode":false,"stripType":"departure"}},
+    "PAO":{ "PAO-CD":{"airports":["KPAO"],"type":"CD","auto_Print_Strips":true,"hasBarcode":false,"stripType":"departure"}},
+    "DBN":{ "ORD-CD":{"airports":["KPUJ"],"type":"GC","auto_Print_Strips":false,"hasBarcode":true,"stripType":"departure"}}
+},
+"delayReporting":{"averageTaxiTime":10,"discordWebhook":"https://discord.com/api/webhooks/1124601273078005830/Nf2AARyX5Gif_gszLx4qYfp6Jf4_2p_4OfBhExtz-yMES84F3SQMscfFq5UTxkyunIEf"},
+"fence_data":{"CD":0.026079,"GC":0.026079,"LC":0.026079,"TAR":1,"COMBINED":1}
+}

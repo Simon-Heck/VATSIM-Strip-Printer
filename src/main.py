@@ -7,6 +7,7 @@ from ClearStoredCallsigns import ClearStoredCallsigns
 from HazardousWX import WXRadio
 import pickle
 import json
+from HazardousWX import WXRadio
 
 __author__ = "Simon Heck"
 
@@ -16,8 +17,8 @@ class Main():
         # Full path used for debugging
         # acft_json_path = "./data/acft_database.json"
         acft_json_path = "C:/Users/simon/OneDrive/Documents/Coding_Projects/strip-data-collector/src/data/airports.json"
-        # airports = "./data/airports.json"
-        airports = "C:/Users/simon/OneDrive/Documents/Coding_Projects/strip-data-collector/src/data/airports.json"
+        # airports_path = "./data/airports.json"
+        airports_path = "C:/Users/simon/OneDrive/Documents/Coding_Projects/strip-data-collector/src/data/airports.json"
         # printer_positions = "./data/positions.json"
         printer_positions = "C:/Users/simon/OneDrive/Documents/Coding_Projects/strip-data-collector/src/data/positions.json"
         # cached_callsign_path = "./data/cached_departures_that_have_been_printed"
@@ -31,6 +32,7 @@ class Main():
         control_area = ""        
         printed_callsigns = []
         # TODO: Handle empty pickle file
+
         # ----Open printer positions----
         position_file = open(printer_positions, 'rb')
         printer_positions = json.load(position_file)
@@ -53,6 +55,24 @@ class Main():
         control_area = ""        
         printed_callsigns = []
         # TODO: Handle empty pickle file
+        # #7/3 BEGIN
+        
+        # # ----Open Printer Positions----
+        # printer_positions_file = open(printerpositions_path, 'rb')
+        # printer_positions = json.load(printer_positions_file)
+        # printer_positions_file.close()
+
+        # ---Open Airports File-----
+        airfields_file = open(airports_path, 'rb')
+        airports = json.load(airfields_file)
+        airfields_file.close()
+        
+        # # ---Open Aircraft File-----
+        # acft_file = open(acft_json_path, 'rb')
+        # acft_dict = json.load(acft_file)
+        # acft_file.close()
+
+        # #7/3 END
 
         try:
             printed_callsign_file = open(cached_callsign_path, "rb")
@@ -105,11 +125,12 @@ class Main():
         # -----Print all Departures-----
         while(True):
             try:
-                response = input("Do you want to print all departures on the ground? Reply with a '1' for yes, '0' for no: ")
-                print_all_departures = bool(int(response))
-                if(print_all_departures):
-                    response = input(f"This will possibly print up to {len(current_callsigns_cached)} strips. Reply '1' for yes, '0' for no: ")
+                if control_area['auto_Print_Strips']: #If the position is configured to NOT auto-print strips... these settings are useless... so might as well skip 'em.
+                    response = input("Do you want to print all departures on the ground? Reply with a '1' for yes, '0' for no: ")
                     print_all_departures = bool(int(response))
+                    if(print_all_departures):
+                        response = input(f"This will possibly print up to {len(current_callsigns_cached)} strips. Reply '1' for yes, '0' for no: ")
+                        print_all_departures = bool(int(response))
                     
                 if(print_all_departures):
                     response = input(f"Do you want to clear the {len(current_callsigns_cached)} cached strips? Reply '1' for yes, '0' for no: ")
@@ -127,10 +148,13 @@ class Main():
         printed_callsigns = current_callsigns_cached
         
         printer = Printer(aircraft_dict) 
-        data_collector = DataCollector(json_url, control_area, printer, printed_callsigns, cached_callsign_path, positions, aircraft_dict)
+        data_collector = DataCollector(json_url, control_area, printer, printed_callsigns, cached_callsign_path, printer_positions, airports)
+        # efsts = Scanner(control_area, sigmetJSON, printer_positions, airports, data_collector)
         callsign_requester = CallsignRequester(printer, data_collector, control_area)
+                                            #    , efsts)
         json_refresh = JSONRefreshTimer(data_collector)
-        wx_refresh = WXRadio(control_area, printer, airports, sigmetJSON, cwasJSON, positions)
+        wx_refresh = WXRadio(control_area, printer, airports, sigmetJSON, cwasJSON)
+
 
         # initial data grab
         data_collector.check_for_updates()
