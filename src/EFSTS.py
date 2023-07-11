@@ -39,31 +39,39 @@ class Scanner:
     def scan(self, callsign):
         position = self.controlType
         if position == "GC":
-            self.startClock(callsign)
+            self.start_clock(callsign)
         elif position == "LC":
-            self.sendDeparture(callsign)
+            visualFlag = False
+            if callsign[0].upper() == "V":
+                visualFlag = True
+                callsign = callsign[1:]
+            self.send_departure(callsign, visualFlag)
 
-    def startClock(self, callsign):
+    def start_clock(self, callsign):
+        visualFlag = False
+        if callsign[0].upper() == "V":
+            visualFlag = True
+            callsign = callsign[1:]
         if callsign not in self.queue:
+            if callsign.isnumeric() != True:
+                return
             currentTime = time.time()
             self.queue[callsign] = currentTime
-            print(self.queue)
-    #    else: #This is for BUG TESTING PURPOSES Lol
-    #        self.sendDeparture(callsign)
+        #    print(self.queue)
+        else: #This is for BUG TESTING PURPOSES Lol
+            self.send_departure(callsign, visualFlag)
 
-    def sendDeparture(self, callsign):
-        print(self.queue)
+    def send_departure(self, callsign, visualFlag):
         if callsign in self.queue:
             #Determine Delay
             startTime = self.queue[callsign]
             currentTime = time.time()
             totalDelay = (currentTime - startTime) / 60
             totalDelay = math.floor(totalDelay)
-        #    self.totalDelay[callsign] = {"totalDelay":totalDelay,"outTime":currentTime}
-        #    print(self.totalDelay[callsign])
+            self.totalDelay[callsign] = totalDelay
+            print(self.totalDelay[callsign])
             self.queue.pop(callsign)
-        self.pushDeparture(callsign)
-        print(self.queue)
+        self.push_departure(callsign, visualFlag)
 
     def purgeQueue(self):
         self.queue = {}
@@ -87,6 +95,15 @@ class Scanner:
         except:
             print(f"Unable to find {callsign}. Sorry!")
 
+    def convert_identity(self, callsign):
+        acftList = self.data_collector.get_json()
+        found = False
+        for aircraft in acftList['pilots']:
+            if aircraft['cid'] is callsign:
+                print(aircraft['callsign'])
+                found = True
+        if found != True:
+            print(f"Sorry, I couldn't find {callsign}. Please verify they have not dropped out.")
 
     def opsNet(self):
         self.maxReportedDelay = 0
@@ -112,8 +129,8 @@ class Scanner:
                 else:
                     self.queue.pop(aircraft)
             
-            for aircraft in self.totalDelay:
-                totalDelay.append(self.totalDelay[aircraft]['totalDelay'])
+            for aircraft in self.totalDelay.copy():
+                totalDelay.append(self.totalDelay[aircraft])
                 self.totalDelay.pop(aircraft)
             
             #Calculate the maximum delay
@@ -126,7 +143,7 @@ class Scanner:
             #Correct for airport taxi times
             maxDelay = maxDelay - self.averageTaxiTime
 
-            #If the max delay is... negative... let's correct for that lol
+            #If the max delay is... negative... let's correct for that.
             if maxDelay < 0:
                 maxDelay = 0
 
@@ -198,6 +215,5 @@ class Scanner:
         else:
             return "OTHER:OTHER"
 
-    def pushDeparture(self,callsign):
-        visualFlag = False
+    def push_departure(self,callsign, visualFlag):
         print(f'PUSHING {callsign} TO DEPARTURE RADAR. VISUAL SEPARATION: {visualFlag}.')

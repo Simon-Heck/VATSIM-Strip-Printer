@@ -1,6 +1,3 @@
-### I think this should maybe keep track of the departure split? Maybe?
-### Definitely should be able to poll the number of departures i think
-
 import time
 import json
 from DataCollector import DataCollector
