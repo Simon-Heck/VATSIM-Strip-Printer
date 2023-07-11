@@ -6,16 +6,17 @@ import re
 __author__ = "Zackaria B."
 
 class JSONRefreshTimer:
-    def __init__(self, data_collector:DataCollector) -> None:
+    def __init__(self, data_collector:DataCollector, json_url) -> None:
         self.data_collector = data_collector
+        self.json_url = json_url
 
     def start_refreshing(self, delay:int = 15):
+        self.calculateDelay(self.json_url)
         while(True):
             time.sleep(delay)
             self.data_collector.check_for_updates()
 
     def calculateDelay(self, json_url):
-        print("Syncing data... please wait!")
         start_time = (requests.get(json_url).json())["general"]["update_timestamp"]
         jsonSeconds = re.findall(":..", start_time) #find seconds
         jsonSeconds = int(re.sub(":","",jsonSeconds[1])) #clean up seconds so we can make it an integer
@@ -44,7 +45,6 @@ class JSONRefreshTimer:
         if timeToWait == 16:
             timeToWait = 0 #Literally means it doesn't need to refresh lol
             print("Jackpot!")
-        print("Estimated wait time is " + str(timeToWait)+ " seconds.")
+        print(f"Syncing delay clock. Wait time is {str(timeToWait)} seconds. Happy stripping!")
         time.sleep(timeToWait)
-        print("Delay implemeted and data synced. Unlocking program. Happy stripping!")
         return

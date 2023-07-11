@@ -152,7 +152,7 @@ class Main():
         # efsts = Scanner(control_area, sigmetJSON, printer_positions, airports, data_collector)
         callsign_requester = CallsignRequester(printer, data_collector, control_area)
                                             #    , efsts)
-        json_refresh = JSONRefreshTimer(data_collector)
+        json_refresh = JSONRefreshTimer(data_collector, json_url)
         wx_refresh = WXRadio(control_area, printer, airports, sigmetJSON, cwasJSON)
 
 
@@ -170,14 +170,6 @@ class Main():
         
         print("Would you like Hazardous Weather Advisories?")
         enablewxradio = bool(int(input('Reply "1" for yes, and "0" for no: ')))
-
-        #start printing strips while customer decides whether or not they want to sync the data.
-        print("Would you like to sync data collection with the network?")
-        try:
-            if bool(int(input('Reply "1" for yes, and "0" for no: '))):
-                json_refresh.calculateDelay(json_url)
-        except:
-            print("Sorry, I'm not sure I understand. Skipping data sync.")
 
         # start other threads
         automated_strip_printing.start()
